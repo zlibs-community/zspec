@@ -29,6 +29,23 @@ class Specification[T](ABC):
         """Negate this specification."""
         return NotSpecification(self)
 
+    @override
+    def __repr__(self) -> str:
+        """Return ``ClassName(attr=value, ...)`` for all slots."""
+        cls = type(self)
+        slots: list[str] = []
+        for c in cls.__mro__:
+            for s in getattr(c, "__slots__", ()):
+                if s not in slots:
+                    slots.append(s)
+        args = ", ".join(f"{s}={getattr(self, s)!r}" for s in slots)
+        return f"{cls.__name__}({args})"
+
+    @override
+    def __str__(self) -> str:
+        """Return the class name. Override in subclasses for custom rendering."""
+        return type(self).__name__
+
     def __call__(self, candidate: T) -> bool:
         """Evaluate the specification against *candidate*."""
         return self.is_satisfied_by(candidate)
@@ -77,6 +94,10 @@ class AndSpecification[T](Specification[T]):
             candidate,
         ) and self.right.is_satisfied_by(candidate)
 
+    @override
+    def __str__(self) -> str:
+        return f"({self.left} AND {self.right})"
+
 
 class OrSpecification[T](Specification[T]):
     """Disjunction of two specifications (produced by ``|``)."""
@@ -95,6 +116,10 @@ class OrSpecification[T](Specification[T]):
             candidate,
         ) or self.right.is_satisfied_by(candidate)
 
+    @override
+    def __str__(self) -> str:
+        return f"({self.left} OR {self.right})"
+
 
 class NotSpecification[T](Specification[T]):
     """Negation of a specification (produced by ``~``)."""
@@ -109,3 +134,7 @@ class NotSpecification[T](Specification[T]):
     def is_satisfied_by(self, candidate: T) -> bool:
         """Check whether *candidate* does **not** satisfy the specification."""
         return not self.spec.is_satisfied_by(candidate)
+
+    @override
+    def __str__(self) -> str:
+        return f"NOT ({self.spec})"

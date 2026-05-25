@@ -4,6 +4,12 @@ Composable specification pattern for Python 3.14+.
 
 Define business rules as objects, then combine them with `&` (and), `|` (or), and `~` (not).
 
+## The problem
+
+Business rules tend to spread across your codebase. A check like *"is this order eligible for free shipping?"* might live in a service method, duplicated in a view, slightly different in a validation layer. When requirements change, you hunt down every copy and hope you found them all.
+
+The Specification pattern solves this by turning each rule into a single, testable object. Combine them with `&`, `|`, `~` to express complex logic without writing new classes.
+
 ## Why?
 
 The Specification pattern lets you:

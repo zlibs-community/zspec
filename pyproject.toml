@@ -26,6 +26,7 @@ target-version = "py314"
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = [
+    "TC001",
     "TC003",
     "D203",  # conflicts with D211
     "D213",  # conflicts with D212

@@ -16,3 +16,11 @@
 ::: zspec.NotSpecification
     options:
         members: true
+
+::: zspec.Translator
+    options:
+        members: true
+
+::: zspec.SqlTranslator
+    options:
+        members: true
