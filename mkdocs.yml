@@ -29,20 +29,6 @@ nav:
   - API Reference: api.md
 
 plugins:
-  - i18n:
-      languages:
-        - locale: en
-          name: English
-          default: true
-          build: true
-        - locale: ru
-          name: Русский
-          build: true
-          nav_translations:
-            Home: Главная
-            Usage: Использование
-            Translator: Транслятор
-            API Reference: API
   - search
   - mkdocstrings:
       handlers:
