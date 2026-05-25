@@ -1,4 +1,4 @@
-"""ZSpec — a specification pattern library for Python."""
+"""zspec — a specification pattern library for Python."""
 
 from zspec.explain import (
     ExplainNode as ExplainNode,

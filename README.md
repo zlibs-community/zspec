@@ -1,4 +1,4 @@
-# ZSpec
+# zspec
 
 [![PyPI](https://img.shields.io/pypi/v/zspec)](https://pypi.org/project/zspec/)
 [![Python](https://img.shields.io/pypi/pyversions/zspec)](https://pypi.org/project/zspec/)

@@ -1,4 +1,4 @@
-# ZSpec
+# zspec
 
 Composable specification pattern for Python 3.14+.
 
@@ -13,7 +13,7 @@ Business rules tend to spread across your codebase. A check like *"is this order
 
 The Specification pattern solves this by turning each rule into a single, testable object. Combine them with `&`, `|`, `^`, `~` to express complex logic without writing new classes.
 
-## Why ZSpec?
+## Why zspec?
 
 | | |
 |---|---|

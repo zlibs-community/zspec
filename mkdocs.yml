@@ -1,4 +1,4 @@
-site_name: ZSpec
+site_name: zspec
 site_description: Composable specification pattern for Python
 repo_url: https://github.com/oek1ng/zspec
 theme:
