@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.1.1 (2026-05-25)
+
+### Bug Fixes
+
+- Remove master branch from workflows
+  ([`0af7638`](https://github.com/oek1ng/zspec/commit/0af763831b3d10ffc4f5f6f17b2512bddbf18cc2))
+
+
 ## v1.1.0 (2026-05-25)
 
 ### Features
