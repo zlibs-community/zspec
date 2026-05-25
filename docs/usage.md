@@ -123,6 +123,39 @@ result = even.filter(range(10**6))
 next(result)  # 0 — only evaluates one element at a time
 ```
 
+## Rejecting candidates
+
+`reject()` is the inverse of `filter()` — yield only non-matching candidates:
+
+```python
+even = Specification.of(lambda x: x % 2 == 0)
+list(even.reject([1, 2, 3, 4]))  # [1, 3]
+```
+
+Lazy, works with large iterables.
+
+## Partitioning collections
+
+`partition()` splits an iterable into `(passed, failed)` in one pass:
+
+```python
+even = Specification.of(lambda x: x % 2 == 0)
+passed, failed = even.partition([1, 2, 3, 4])
+# passed = [2, 4], failed = [1, 3]
+```
+
+## Constant specifications
+
+`Specification.true()` and `Specification.false()` for dynamic composition:
+
+```python
+spec = Specification.true()  # neutral start
+if min_price:
+    spec = spec & MinPrice(min_price)
+if in_stock_only:
+    spec = spec & InStock()
+```
+
 ## Debugging with `explain()`
 
 Use `explain(spec, candidate)` to see **why** a specification passed or failed:

@@ -59,6 +59,23 @@ class Specification[T](ABC):
         """Yield candidates that satisfy this specification."""
         return (c for c in candidates if self(c))
 
+    def reject(self, candidates: Iterable[T]) -> Iterator[T]:
+        """Yield candidates that do **not** satisfy this specification."""
+        return (c for c in candidates if not self(c))
+
+    def partition(
+        self, candidates: Iterable[T],
+    ) -> tuple[list[T], list[T]]:
+        """Split into ``(passed, failed)`` lists."""
+        passed: list[T] = []
+        failed: list[T] = []
+        for c in candidates:
+            if self(c):
+                passed.append(c)
+            else:
+                failed.append(c)
+        return passed, failed
+
     @classmethod
     def of(cls, fn: Callable[[T], bool]) -> Specification[T]:
         """Create a specification from *fn*.
@@ -77,6 +94,16 @@ class Specification[T](ABC):
             },
         )
         return cast(Specification[T], spec_type())
+
+    @classmethod
+    def true(cls) -> Specification[T]:
+        """Return a specification satisfied by **any** candidate."""
+        return cls.of(lambda _: True)
+
+    @classmethod
+    def false(cls) -> Specification[T]:
+        """Return a specification satisfied by **no** candidate."""
+        return cls.of(lambda _: False)
 
     @classmethod
     def all_of(
