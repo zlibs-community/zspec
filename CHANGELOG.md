@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.0.3 (2026-05-25)
+
+### Bug Fixes
+
+- **docs**: Rendering tables inconsist
+  ([`4976df2`](https://github.com/oek1ng/zspec/commit/4976df2d5766999a82cbc6274ba492e27e3e8976))
+
+
 ## v1.0.2 (2026-05-25)
 
 ### Bug Fixes
