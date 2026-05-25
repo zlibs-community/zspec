@@ -1,6 +1,6 @@
 [project]
 name = "zspec"
-version = "1.0.4"
+version = "1.0.5"
 description = "Composable specification pattern for Python"
 readme = "README.md"
 authors = [

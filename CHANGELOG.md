@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.0.5 (2026-05-25)
+
+### Bug Fixes
+
+- **docs**: Remove ai-slop
+  ([`f85d452`](https://github.com/oek1ng/zspec/commit/f85d4526623ac5cbd1fd4633e0a4f91db2f4a0c3))
+
+
 ## v1.0.4 (2026-05-25)
 
 ### Bug Fixes
