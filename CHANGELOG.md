@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.0.4 (2026-05-25)
+
+### Bug Fixes
+
+- Typo
+  ([`9b683d8`](https://github.com/oek1ng/zspec/commit/9b683d85e80d21fd988afb16164eabe0fa2acd72))
+
+
 ## v1.0.3 (2026-05-25)
 
 ### Bug Fixes
