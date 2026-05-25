@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.0.2 (2026-05-25)
+
+### Bug Fixes
+
+- Release job
+  ([`57a6d06`](https://github.com/oek1ng/zspec/commit/57a6d064de59dbfef1cc2a0182163c2aa7cfd7df))
+
+
 ## v1.0.1 (2026-05-25)
 
 ### Bug Fixes
