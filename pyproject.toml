@@ -70,7 +70,7 @@ testpaths = ["tests"]
 [tool.semantic_release]
 version_toml = ["pyproject.toml:project.version"]
 changelog_file = "CHANGELOG.md"
-commit_parser = "emoji"
+commit_parser = "conventional"
 
 [tool.ruff.format]
 quote-style = "double"

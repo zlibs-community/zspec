@@ -1,11 +1,14 @@
 name: Release
 
 on:
-  push:
+  workflow_run:
+    workflows: [CI]
     branches: [master, main]
+    types: [completed]
 
 jobs:
   release:
+    if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     environment: pypi
     permissions:
@@ -20,4 +23,7 @@ jobs:
           python-version: "3.14"
       - run: uv sync --all-extras
       - run: uv run semantic-release version
-      - run: uv run semantic-release publish
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: uv build
+      - run: uv publish --trusted-publishing
