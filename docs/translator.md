@@ -32,9 +32,7 @@ class MySql(SqlTranslator):
             case MinAge(age=age):
                 return SqlFragment("age >= %s", (age,))
             case _:
-                raise NotImplementedError(
-                    f"Unknown spec: {type(spec).__name__}"
-                )
+                return super()._translate(spec)
 
 
 translator = MySql()
@@ -88,7 +86,7 @@ class MyTranslator(SqlAlchemyTranslator):
             case MinPrice(min_price=price):
                 return product.c.price >= price
             case _:
-                raise NotImplementedError
+                return super()._translate(spec)
 
 translator = MyTranslator()
 stmt = select(product).where(
@@ -134,7 +132,7 @@ class MyTranslator(DjangoQTranslator):
             case MinPrice(min_price=price):
                 return Q(price__gte=price)
             case _:
-                raise NotImplementedError
+                return super()._translate(spec)
 
 translator = MyTranslator()
 # results = Product.objects.filter(
@@ -178,7 +176,7 @@ class MyTranslator(MongoTranslator):
             case MinPrice(min_price=price):
                 return {"price": {"$gte": price}}
             case _:
-                raise NotImplementedError
+                return super()._translate(spec)
 
 translator = MyTranslator()
 # results = collection.find(

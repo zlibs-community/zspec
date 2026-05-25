@@ -112,7 +112,7 @@ class MySql(SqlTranslator):
             case MinPrice(price=price):
                 return SqlFragment("price >= %s", (price,))
             case _:
-                raise NotImplementedError
+                return super()._translate(spec)
 
 
 spec = MinPrice(100) & MinPrice(200)

@@ -35,8 +35,7 @@ class MyMongo(MongoTranslator):
             case MinPrice(min_price=price):
                 return {"price": {"$gte": price}}
             case _:
-                msg = f"Unknown spec: {type(spec).__name__}"
-                raise NotImplementedError(msg)
+                return super()._translate(spec)
 
 
 class TestMongoTranslator:

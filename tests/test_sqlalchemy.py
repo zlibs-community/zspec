@@ -37,8 +37,7 @@ class EvenSqlAlchemy(SqlAlchemyTranslator):
             case Positive():
                 return sa.column("val") > 0
             case _:
-                msg = f"Unknown spec: {type(spec).__name__}"
-                raise NotImplementedError(msg)
+                return super()._translate(spec)
 
 
 class TestSqlAlchemyTranslator:

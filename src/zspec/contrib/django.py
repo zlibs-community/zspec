@@ -25,7 +25,7 @@ class DjangoQTranslator(Translator[Q]):
                     case MinPrice(min_price=price):
                         return Q(price__gte=price)
                     case _:
-                        raise NotImplementedError
+                        return super()._translate(spec)
 
         translator = MyTranslator()
         results = Product.objects.filter(

@@ -25,8 +25,7 @@ class SqlTranslator(Translator[SqlFragment]):
                     case MinPrice(min_price=price):
                         return SqlFragment("price >= %s", (price,))
                     case _:
-                        msg = f"Specification {type(spec).__name__} is not supported"
-                        raise NotImplementedError(msg)
+                        return super()._translate(spec)
 
     """
 
@@ -65,7 +64,7 @@ class MongoTranslator(Translator[dict[str, Any]]):
                     case MinPrice(min_price=price):
                         return {"price": {"$gte": price}}
                     case _:
-                        raise NotImplementedError
+                        return super()._translate(spec)
 
         translator = MyTranslator()
         results = collection.find(

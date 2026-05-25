@@ -32,7 +32,7 @@ class SqlAlchemyTranslator(Translator[ColumnElement[bool]]):
                     case MinPrice(min_price=price):
                         return product.c.price >= price
                     case _:
-                        raise NotImplementedError
+                        return super()._translate(spec)
 
         translator = MyTranslator()
         stmt = select(product).where(

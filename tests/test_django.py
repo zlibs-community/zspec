@@ -49,8 +49,7 @@ class MyDjango(DjangoQTranslator):
             case MinPrice(min_price=price):
                 return Q(price__gte=price)
             case _:
-                msg = f"Unknown spec: {type(spec).__name__}"
-                raise NotImplementedError(msg)
+                return super()._translate(spec)
 
 
 class TestDjangoQTranslator:
