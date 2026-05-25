@@ -32,6 +32,16 @@ ignore = [
     "D213",  # conflicts with D212
 ]
 
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = [
+    "D1",   # docstrings not required in tests
+    "S101", # assert is fine in tests
+    "SLF001", # private member access is fine in tests
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
@@ -43,6 +53,7 @@ build-backend = "uv_build"
 [dependency-groups]
 dev = [
     "pyrefly>=1.0.0",
+    "pytest>=8.0.0",
     "ruff>=0.15.14",
 ]
 docs = [
