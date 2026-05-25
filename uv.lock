@@ -510,6 +510,13 @@ name = "zspec"
 version = "0.1.0"
 source = { editable = "." }
 
+[package.optional-dependencies]
+docs = [
+    { name = "mkdocs" },
+    { name = "mkdocs-material" },
+    { name = "mkdocstrings", extra = ["python"] },
+]
+
 [package.dev-dependencies]
 dev = [
     { name = "pyrefly" },
@@ -522,6 +529,12 @@ docs = [
 ]
 
 [package.metadata]
+requires-dist = [
+    { name = "mkdocs", marker = "extra == 'docs'", specifier = ">=1.6.0" },
+    { name = "mkdocs-material", marker = "extra == 'docs'", specifier = ">=9.5.0" },
+    { name = "mkdocstrings", extras = ["python"], marker = "extra == 'docs'", specifier = ">=0.30.0" },
+]
+provides-extras = ["docs"]
 
 [package.metadata.requires-dev]
 dev = [

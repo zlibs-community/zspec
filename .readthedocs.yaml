@@ -5,5 +5,12 @@ build:
   tools:
     python: "3.14"
 
+python:
+  install:
+    - method: pip
+      path: .
+      extra_requirements:
+        - docs
+
 mkdocs:
   configuration: mkdocs.yml
