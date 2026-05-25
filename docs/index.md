@@ -62,10 +62,8 @@ assert free_shipping(order)
 
 ## Operators at a glance
 
-| Operator | Description |
-|---|---|
-| `spec & other` | Both satisfied (AND) |
-| `spec \| other` | At least one satisfied (OR) |
-| `spec ^ other` | Exactly one satisfied (XOR) |
-| `~spec` | Negation (NOT) |
-| `spec(candidate)` | Shorthand for `is_satisfied_by` |
+- `spec & other` — Both satisfied (AND)
+- `spec | other` — At least one satisfied (OR)
+- `spec ^ other` — Exactly one satisfied (XOR)
+- `~spec` — Negation (NOT)
+- `spec(candidate)` — Shorthand for `is_satisfied_by`
