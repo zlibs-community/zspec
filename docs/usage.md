@@ -87,6 +87,27 @@ spec(user)          # __call__
 spec.is_satisfied_by(user)  # explicit method
 ```
 
+## String rendering with `str()` and `repr()`
+
+Use `str(spec)` for a readable tree. Override `__str__` in leaf specs:
+
+```python
+class MinAge(Specification[Any]):
+    def __init__(self, age: int) -> None:
+        self.age = age
+
+    def is_satisfied_by(self, candidate: object) -> bool:
+        return True
+
+    def __str__(self) -> str:
+        return f"age >= {self.age}"
+
+
+spec = MinAge(18) & MinAge(21)
+print(str(spec))   # (age >= 18 AND age >= 21)
+print(repr(spec))  # AndSpecification(left=MinAge(age=18), right=MinAge(age=21))
+```
+
 ## Quick factory: `Specification.of()`
 
 For simple checks, skip the subclass boilerplate:

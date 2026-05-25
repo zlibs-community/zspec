@@ -1,8 +1,6 @@
 # Translator
 
-A visitor that walks a specification tree and translates it into another form — SQL, JSON, or anything else.
-
-For human-readable rendering, use `str(spec)` and `repr(spec)` directly on specifications.
+A visitor that walks a specification tree and translates it into another form — SQL, MongoDB filters, Django Q objects, or anything else.
 
 ## Built-in translators
 
@@ -115,27 +113,6 @@ translator = MyTranslator()
 results = collection.find(
     translator.translate(InStock() & MinPrice(100)),
 )
-```
-
-### String rendering with `str()` and `repr()`
-
-Use `str(spec)` for a readable tree representation. Override `__str__` in leaf specifications to customize:
-
-```python
-class MinAge(Specification[Any]):
-    def __init__(self, age: int) -> None:
-        self.age = age
-
-    def is_satisfied_by(self, candidate: object) -> bool:
-        return True
-
-    def __str__(self) -> str:
-        return f"age >= {self.age}"
-
-
-spec = MinAge(18) & MinAge(21)
-print(str(spec))   # (age >= 18 AND age >= 21)
-print(repr(spec))  # AndSpecification(left=MinAge(age=18), right=MinAge(age=21))
 ```
 
 ## Writing a custom translator
