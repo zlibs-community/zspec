@@ -63,7 +63,6 @@ assert eligible.is_satisfied_by(product)  # same thing
 - **Type-safe** --- generic `Specification[T]` preserves the candidate type
 - **Bulk combinators** --- `Specification.all_of(...)` and `Specification.any_of(...)`
 - **Zero dependencies** --- standard library only
-- **Python 3.14+** --- leverages modern generics (`class Foo[T]`)
 
 ## API overview
 
@@ -77,8 +76,8 @@ assert eligible.is_satisfied_by(product)  # same thing
 - `spec.filter(iterable)` — Lazy filter over a collection
 - `spec.reject(iterable)` — Inverse of filter
 - `spec.partition(iterable)` — Split into `(passed, failed)` lists
-- `Specification.all_of(specs)` — Reduce with AND, returns `None` for empty input
-- `Specification.any_of(specs)` — Reduce with OR, returns `None` for empty input
+- `Specification.all_of(specs, default=None)` — AND over iterable, returns *default* when empty
+- `Specification.any_of(specs, default=None)` — OR over iterable, returns *default* when empty
 - `explain(spec, candidate)` — Debug tree showing what passed/failed
 
 ## Translators

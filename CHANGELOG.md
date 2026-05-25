@@ -2,6 +2,30 @@
 
 <!-- version list -->
 
+## v1.1.1 (2026-05-25)
+
+### Bug Fixes
+
+- Remove master branch from workflows
+  ([`0af7638`](https://github.com/oek1ng/zspec/commit/0af763831b3d10ffc4f5f6f17b2512bddbf18cc2))
+
+
+## v1.1.0 (2026-05-25)
+
+### Features
+
+- Default for any_of/all_of
+  ([`577438b`](https://github.com/oek1ng/zspec/commit/577438b1bd11c8d62e1534cbd5679faa025fd372))
+
+
+## v1.0.5 (2026-05-25)
+
+### Bug Fixes
+
+- **docs**: Remove ai-slop
+  ([`f85d452`](https://github.com/oek1ng/zspec/commit/f85d4526623ac5cbd1fd4633e0a4f91db2f4a0c3))
+
+
 ## v1.0.4 (2026-05-25)
 
 ### Bug Fixes

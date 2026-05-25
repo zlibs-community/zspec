@@ -54,7 +54,7 @@ is_active = ~is_banned
 ### `all_of`
 
 Satisfied when **every** specification in the iterable is satisfied.
-Returns `None` for an empty iterable.
+Returns `None` for an empty iterable. Pass ``default`` to avoid null checks:
 
 ```python
 spec = Specification.all_of([
@@ -62,12 +62,15 @@ spec = Specification.all_of([
     EmailVerified(),
     HasTwoFactor(),
 ])
+
+# With a default for empty input
+spec = Specification.all_of(filters, default=Specification.true())
 ```
 
 ### `any_of`
 
 Satisfied when **at least one** specification in the iterable is satisfied.
-Returns `None` for an empty iterable.
+Returns `None` for an empty iterable. Pass ``default`` to avoid null checks:
 
 ```python
 spec = Specification.any_of([
@@ -75,6 +78,9 @@ spec = Specification.any_of([
     Moderator(),
     Owner(),
 ])
+
+# With a default for empty input
+spec = Specification.any_of(filters, default=Specification.false())
 ```
 
 ## Calling a specification

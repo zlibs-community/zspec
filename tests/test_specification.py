@@ -106,6 +106,11 @@ class TestAllOfAnyOf:
     def test_all_of_empty(self) -> None:
         assert Specification.all_of([]) is None
 
+    def test_all_of_empty_with_default(self) -> None:
+        result = Specification.all_of([], default=Specification.true())
+        assert result is not None
+        assert result(None) is True
+
     def test_all_of_all_true(self) -> None:
         spec = Specification.all_of([Always(), Always(), Always()])
         assert spec is not None
@@ -116,6 +121,11 @@ class TestAllOfAnyOf:
         assert spec(None) is False
     def test_any_of_empty(self) -> None:
         assert Specification.any_of([]) is None
+
+    def test_any_of_empty_with_default(self) -> None:
+        result = Specification.any_of([], default=Specification.false())
+        assert result is not None
+        assert result(None) is False
 
     def test_any_of_all_false(self) -> None:
         spec = Specification.any_of([Never(), Never()])

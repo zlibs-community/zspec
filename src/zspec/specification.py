@@ -107,28 +107,32 @@ class Specification[T](ABC):
 
     @classmethod
     def all_of(
-        cls, specs: Iterable[Specification[T]],
+        cls,
+        specs: Iterable[Specification[T]],
+        default: Specification[T] | None = None,
     ) -> Specification[T] | None:
-        """Return a specification that is satisfied when **all** of *specs* are.
+        """Return a specification satisfied when **all** of *specs* are.
 
-        Returns ``None`` when *specs* is empty.
+        Returns *default* when *specs* is empty.
         """
         items = list(specs)
         if not items:
-            return None
+            return default
         return reduce(and_, items)
 
     @classmethod
     def any_of(
-        cls, specs: Iterable[Specification[T]],
+        cls,
+        specs: Iterable[Specification[T]],
+        default: Specification[T] | None = None,
     ) -> Specification[T] | None:
-        """Return a specification that is satisfied when **any** of *specs* is.
+        """Return a specification satisfied when **any** of *specs* is.
 
-        Returns ``None`` when *specs* is empty.
+        Returns *default* when *specs* is empty.
         """
         items = list(specs)
         if not items:
-            return None
+            return default
         return reduce(or_, items)
 
 
