@@ -11,5 +11,5 @@ docs:
 	uv run mkdocs build -s
 
 clean:
-	rm -rf site/ .pytest_cache/ .ruff_cache/
+	rm -rf site/ dist/ .pytest_cache/ .ruff_cache/
 	find . -type d -name __pycache__ -exec rm -rf {} +
