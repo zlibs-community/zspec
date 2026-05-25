@@ -1,0 +1,111 @@
+"""Specification pattern — composable business rule objects."""
+
+from abc import ABC, abstractmethod
+from collections.abc import Iterable
+from functools import reduce
+from operator import and_, or_
+from typing import override
+
+
+class Specification[T](ABC):
+    """Abstract specification that can be combined with ``&``, ``|``, ``~``."""
+
+    __slots__: tuple[str, ...] = ()
+
+    @abstractmethod
+    def is_satisfied_by(self, candidate: T) -> bool:
+        """Check whether *candidate* satisfies this specification."""
+        raise NotImplementedError
+
+    def __and__(self, other: Specification[T]) -> AndSpecification[T]:
+        """Combine with *other* via logical AND."""
+        return AndSpecification(left=self, right=other)
+
+    def __or__(self, other: Specification[T]) -> OrSpecification[T]:
+        """Combine with *other* via logical OR."""
+        return OrSpecification(self, other)
+
+    def __invert__(self) -> NotSpecification[T]:
+        """Negate this specification."""
+        return NotSpecification(self)
+
+    def __call__(self, candidate: T) -> bool:
+        """Evaluate the specification against *candidate*."""
+        return self.is_satisfied_by(candidate)
+
+    @classmethod
+    def all_of(
+        cls, specs: Iterable[Specification[T]],
+    ) -> Specification[T] | None:
+        """Return a specification that is satisfied when **all** of *specs* are.
+
+        Returns ``None`` when *specs* is empty.
+        """
+        items = list(specs)
+        if not items:
+            return None
+        return reduce(and_, items)
+
+    @classmethod
+    def any_of(
+        cls, specs: Iterable[Specification[T]],
+    ) -> Specification[T] | None:
+        """Return a specification that is satisfied when **any** of *specs* is.
+
+        Returns ``None`` when *specs* is empty.
+        """
+        items = list(specs)
+        if not items:
+            return None
+        return reduce(or_, items)
+
+
+class AndSpecification[T](Specification[T]):
+    """Conjunction of two specifications (produced by ``&``)."""
+
+    __slots__ = ("left", "right")
+
+    def __init__(self, left: Specification[T], right: Specification[T]) -> None:
+        """Initialize with *left* and *right* specifications."""
+        self.left = left
+        self.right = right
+
+    @override
+    def is_satisfied_by(self, candidate: T) -> bool:
+        """Check whether *candidate* satisfies both specifications."""
+        return self.left.is_satisfied_by(
+            candidate,
+        ) and self.right.is_satisfied_by(candidate)
+
+
+class OrSpecification[T](Specification[T]):
+    """Disjunction of two specifications (produced by ``|``)."""
+
+    __slots__ = ("left", "right")
+
+    def __init__(self, left: Specification[T], right: Specification[T]) -> None:
+        """Initialize with *left* and *right* specifications."""
+        self.left = left
+        self.right = right
+
+    @override
+    def is_satisfied_by(self, candidate: T) -> bool:
+        """Check whether *candidate* satisfies at least one specification."""
+        return self.left.is_satisfied_by(
+            candidate,
+        ) or self.right.is_satisfied_by(candidate)
+
+
+class NotSpecification[T](Specification[T]):
+    """Negation of a specification (produced by ``~``)."""
+
+    __slots__ = ("spec",)
+
+    def __init__(self, spec: Specification[T]) -> None:
+        """Initialize with *spec* to negate."""
+        self.spec = spec
+
+    @override
+    def is_satisfied_by(self, candidate: T) -> bool:
+        """Check whether *candidate* does **not** satisfy the specification."""
+        return not self.spec.is_satisfied_by(candidate)

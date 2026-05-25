@@ -1,0 +1,44 @@
+[project]
+name = "zspec"
+version = "0.1.0"
+description = "Composable specification pattern for Python"
+readme = "README.md"
+authors = [
+    { name = "Alexandr", email = "alexandr.panteleev2000@gmail.com" }
+]
+requires-python = ">=3.14"
+dependencies = []
+
+[tool.pyrefly]
+preset = "strict"
+python-version = "3.14"
+
+[tool.ruff]
+target-version = "py314"
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "TC003",
+    "D203",  # conflicts with D211
+    "D213",  # conflicts with D212
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[build-system]
+requires = ["uv_build>=0.11.11,<0.12.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pyrefly>=1.0.0",
+    "ruff>=0.15.14",
+]
+docs = [
+    "mkdocs>=1.6.0",
+    "mkdocs-material>=9.5.0",
+    "mkdocstrings[python]>=0.30.0",
+]

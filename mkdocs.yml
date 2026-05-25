@@ -1,0 +1,29 @@
+site_name: ZSpec
+site_description: Composable specification pattern for Python
+repo_url: https://github.com/AlexandrPanteleev/zspec
+theme:
+  name: material
+
+nav:
+  - Home: index.md
+  - Usage: usage.md
+  - API Reference: api.md
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            show_source: true
+            show_root_heading: true
+            show_symbol_type_heading: true
+            heading_level: 2
+            docstring_style: sphinx
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
