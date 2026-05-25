@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.1.0 (2026-05-25)
+
+### Features
+
+- Default for any_of/all_of
+  ([`577438b`](https://github.com/oek1ng/zspec/commit/577438b1bd11c8d62e1534cbd5679faa025fd372))
+
+
 ## v1.0.5 (2026-05-25)
 
 ### Bug Fixes
