@@ -26,4 +26,4 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: uv build
-      - run: uv publish --trusted-publishing
+      - run: uv publish --trusted-publishing always
