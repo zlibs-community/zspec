@@ -9,19 +9,25 @@ A visitor that walks a specification tree and translates it into another form â€
 Generates parameterized SQL from a specification tree. Subclass and override `_translate` for each leaf specification:
 
 ```python
+from dataclasses import dataclass
 from zspec import SqlTranslator, SqlFragment, Specification
 
 
-class MinAge(Specification[Any]):
+@dataclass
+class Person:
+    age: int
+
+
+class MinAge(Specification[Person]):
     def __init__(self, age: int) -> None:
         self.age = age
 
-    def is_satisfied_by(self, candidate: object) -> bool:
-        return True  # evaluated in DB
+    def is_satisfied_by(self, candidate: Person) -> bool:
+        return candidate.age >= self.age
 
 
 class MySql(SqlTranslator):
-    def _translate(self, spec: Specification[Any]) -> SqlFragment:
+    def _translate(self, spec: Specification[Person]) -> SqlFragment:
         match spec:
             case MinAge(age=age):
                 return SqlFragment("age >= %s", (age,))
@@ -43,8 +49,30 @@ assert fragment.params == (18, 21)
 Generate native SQLAlchemy expressions. Install with `pip install zspec[sqlalchemy]`, then subclass and override `_translate`:
 
 ```python
+from dataclasses import dataclass
 from sqlalchemy import Table, Column, Integer, Boolean, select
+from zspec import Specification
 from zspec.contrib.sqlalchemy import SqlAlchemyTranslator
+
+
+@dataclass
+class Product:
+    price: int
+    in_stock: bool
+
+
+class InStock(Specification[Product]):
+    def is_satisfied_by(self, candidate: Product) -> bool:
+        return candidate.in_stock
+
+
+class MinPrice(Specification[Product]):
+    def __init__(self, min_price: int) -> None:
+        self.min_price = min_price
+
+    def is_satisfied_by(self, candidate: Product) -> bool:
+        return candidate.price >= self.min_price
+
 
 product = Table(
     "product", ...,
@@ -53,7 +81,7 @@ product = Table(
 )
 
 class MyTranslator(SqlAlchemyTranslator):
-    def _translate(self, spec: Specification[Any]) -> ColumnElement[bool]:
+    def _translate(self, spec: Specification[Product]) -> ColumnElement[bool]:
         match spec:
             case InStock():
                 return product.c.in_stock.is_(True)
@@ -73,11 +101,33 @@ stmt = select(product).where(
 Generate Django ``Q`` objects. Install with ``pip install zspec[django]``:
 
 ```python
+from dataclasses import dataclass
 from django.db.models import Q
+from zspec import Specification
 from zspec.contrib.django import DjangoQTranslator
 
+
+@dataclass
+class Product:
+    price: int
+    in_stock: bool
+
+
+class InStock(Specification[Product]):
+    def is_satisfied_by(self, candidate: Product) -> bool:
+        return candidate.in_stock
+
+
+class MinPrice(Specification[Product]):
+    def __init__(self, min_price: int) -> None:
+        self.min_price = min_price
+
+    def is_satisfied_by(self, candidate: Product) -> bool:
+        return candidate.price >= self.min_price
+
+
 class MyTranslator(DjangoQTranslator):
-    def _translate(self, spec: Specification[Any]) -> Q:
+    def _translate(self, spec: Specification[Product]) -> Q:
         match spec:
             case InStock():
                 return Q(in_stock=True)
@@ -87,9 +137,9 @@ class MyTranslator(DjangoQTranslator):
                 raise NotImplementedError
 
 translator = MyTranslator()
-results = Product.objects.filter(
-    translator.translate(InStock() & MinPrice(100)),
-)
+# results = Product.objects.filter(
+#     translator.translate(InStock() & MinPrice(100)),
+# )
 ```
 
 ### MongoTranslator
@@ -97,10 +147,31 @@ results = Product.objects.filter(
 Generate MongoDB filter documents â€” no extra dependencies:
 
 ```python
-from zspec import MongoTranslator
+from dataclasses import dataclass
+from zspec import MongoTranslator, Specification
+
+
+@dataclass
+class Product:
+    price: int
+    in_stock: bool
+
+
+class InStock(Specification[Product]):
+    def is_satisfied_by(self, candidate: Product) -> bool:
+        return candidate.in_stock
+
+
+class MinPrice(Specification[Product]):
+    def __init__(self, min_price: int) -> None:
+        self.min_price = min_price
+
+    def is_satisfied_by(self, candidate: Product) -> bool:
+        return candidate.price >= self.min_price
+
 
 class MyTranslator(MongoTranslator):
-    def _translate(self, spec: Specification[Any]) -> dict[str, Any]:
+    def _translate(self, spec: Specification[Product]) -> dict[str, Any]:
         match spec:
             case InStock():
                 return {"in_stock": True}
@@ -110,9 +181,9 @@ class MyTranslator(MongoTranslator):
                 raise NotImplementedError
 
 translator = MyTranslator()
-results = collection.find(
-    translator.translate(InStock() & MinPrice(100)),
-)
+# results = collection.find(
+#     translator.translate(InStock() & MinPrice(100)),
+# )
 ```
 
 ## Writing a custom translator

@@ -88,19 +88,26 @@ assert eligible.is_satisfied_by(product)  # same thing
 Convert specification trees to SQL, MongoDB filters, Django Q objects, or custom formats:
 
 ```python
+from dataclasses import dataclass
 from zspec import SqlTranslator, SqlFragment, Specification
 
 
-class MinPrice(Specification[Any]):
+@dataclass
+class Product:
+    price: int
+    in_stock: bool
+
+
+class MinPrice(Specification[Product]):
     def __init__(self, price: int) -> None:
         self.price = price
 
-    def is_satisfied_by(self, candidate: object) -> bool:
-        return True  # evaluated in DB
+    def is_satisfied_by(self, candidate: Product) -> bool:
+        return candidate.price >= self.price
 
 
 class MySql(SqlTranslator):
-    def _translate(self, spec: Specification[Any]) -> SqlFragment:
+    def _translate(self, spec: Specification[Product]) -> SqlFragment:
         match spec:
             case MinPrice(price=price):
                 return SqlFragment("price >= %s", (price,))

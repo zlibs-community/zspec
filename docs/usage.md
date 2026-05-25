@@ -92,12 +92,21 @@ spec.is_satisfied_by(user)  # explicit method
 Use `str(spec)` for a readable tree. Override `__str__` in leaf specs:
 
 ```python
-class MinAge(Specification[Any]):
+from dataclasses import dataclass
+from zspec import Specification
+
+
+@dataclass
+class Person:
+    age: int
+
+
+class MinAge(Specification[Person]):
     def __init__(self, age: int) -> None:
         self.age = age
 
-    def is_satisfied_by(self, candidate: object) -> bool:
-        return True
+    def is_satisfied_by(self, candidate: Person) -> bool:
+        return candidate.age >= self.age
 
     def __str__(self) -> str:
         return f"age >= {self.age}"
