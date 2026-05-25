@@ -70,15 +70,38 @@ stmt = select(product).where(
 )
 ```
 
-### PyMongoTranslator
+### DjangoQTranslator
 
-Generate MongoDB filter documents. Install with `pip install zspec[pymongo]`:
+Generate Django ``Q`` objects. Install with ``pip install zspec[django]``:
 
 ```python
-from pymongo import MongoClient
-from zspec.contrib.pymongo import PyMongoTranslator
+from django.db.models import Q
+from zspec.contrib.django import DjangoQTranslator
 
-class MyTranslator(PyMongoTranslator):
+class MyTranslator(DjangoQTranslator):
+    def _translate(self, spec: Specification[Any]) -> Q:
+        match spec:
+            case InStock():
+                return Q(in_stock=True)
+            case MinPrice(min_price=price):
+                return Q(price__gte=price)
+            case _:
+                raise NotImplementedError
+
+translator = MyTranslator()
+results = Product.objects.filter(
+    translator.translate(InStock() & MinPrice(100)),
+)
+```
+
+### MongoTranslator
+
+Generate MongoDB filter documents — no extra dependencies:
+
+```python
+from zspec import MongoTranslator
+
+class MyTranslator(MongoTranslator):
     def _translate(self, spec: Specification[Any]) -> dict[str, Any]:
         match spec:
             case InStock():
@@ -89,8 +112,7 @@ class MyTranslator(PyMongoTranslator):
                 raise NotImplementedError
 
 translator = MyTranslator()
-client = MongoClient()
-results = client.db.products.find(
+results = collection.find(
     translator.translate(InStock() & MinPrice(100)),
 )
 ```
@@ -126,3 +148,4 @@ Subclass `Translator[TResult]` and implement four methods:
 | `_and(left, right)` | Combine two results with AND |
 | `_or(left, right)` | Combine two results with OR |
 | `_not(operand)` | Negate a result |
+| `_xor(left, right)` | XOR — defaults to `(A OR B) AND NOT (A AND B)` |

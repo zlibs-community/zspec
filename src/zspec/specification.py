@@ -1,14 +1,15 @@
 """Specification pattern — composable business rule objects."""
 
+
 from abc import ABC, abstractmethod
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable, Iterator
 from functools import reduce
 from operator import and_, or_
-from typing import override
+from typing import cast, override
 
 
 class Specification[T](ABC):
-    """Abstract specification that can be combined with ``&``, ``|``, ``~``."""
+    """Abstract specification that can be combined with ``&``, ``|``, ``~``, ``^``."""
 
     __slots__: tuple[str, ...] = ()
 
@@ -24,6 +25,10 @@ class Specification[T](ABC):
     def __or__(self, other: Specification[T]) -> OrSpecification[T]:
         """Combine with *other* via logical OR."""
         return OrSpecification(self, other)
+
+    def __xor__(self, other: Specification[T]) -> XorSpecification[T]:
+        """Combine with *other* via logical XOR."""
+        return XorSpecification(self, other)
 
     def __invert__(self) -> NotSpecification[T]:
         """Negate this specification."""
@@ -49,6 +54,29 @@ class Specification[T](ABC):
     def __call__(self, candidate: T) -> bool:
         """Evaluate the specification against *candidate*."""
         return self.is_satisfied_by(candidate)
+
+    def filter(self, candidates: Iterable[T]) -> Iterator[T]:
+        """Yield candidates that satisfy this specification."""
+        return (c for c in candidates if self(c))
+
+    @classmethod
+    def of(cls, fn: Callable[[T], bool]) -> Specification[T]:
+        """Create a specification from *fn*.
+
+        Usage::
+
+            adult = Specification.of(lambda u: u.age >= 18)
+        """
+        name = getattr(fn, "__name__", "fn")
+        spec_type = type(
+            f"Of({name})",
+            (Specification,),
+            {
+                "__slots__": (),
+                "is_satisfied_by": staticmethod(fn),
+            },
+        )
+        return cast(Specification[T], spec_type())
 
     @classmethod
     def all_of(
@@ -112,9 +140,10 @@ class OrSpecification[T](Specification[T]):
     @override
     def is_satisfied_by(self, candidate: T) -> bool:
         """Check whether *candidate* satisfies at least one specification."""
-        return self.left.is_satisfied_by(
-            candidate,
-        ) or self.right.is_satisfied_by(candidate)
+        return (
+            self.left.is_satisfied_by(candidate)
+            or self.right.is_satisfied_by(candidate)
+        )
 
     @override
     def __str__(self) -> str:
@@ -138,3 +167,23 @@ class NotSpecification[T](Specification[T]):
     @override
     def __str__(self) -> str:
         return f"NOT ({self.spec})"
+
+
+class XorSpecification[T](Specification[T]):
+    """Exclusive disjunction of two specifications (produced by ``^``)."""
+
+    __slots__ = ("left", "right")
+
+    def __init__(self, left: Specification[T], right: Specification[T]) -> None:
+        """Initialize with *left* and *right* specifications."""
+        self.left = left
+        self.right = right
+
+    @override
+    def is_satisfied_by(self, candidate: T) -> bool:
+        """Check whether exactly one specification is satisfied."""
+        return self.left(candidate) != self.right(candidate)
+
+    @override
+    def __str__(self) -> str:
+        return f"({self.left} XOR {self.right})"

@@ -87,6 +87,59 @@ spec(user)          # __call__
 spec.is_satisfied_by(user)  # explicit method
 ```
 
+## Quick factory: `Specification.of()`
+
+For simple checks, skip the subclass boilerplate:
+
+```python
+adult = Specification.of(lambda u: u.age >= 18)
+active = Specification.of(lambda u: u.is_active)
+
+# fully composable
+eligible = adult & active
+```
+
+The lambda name is preserved in `repr()`.
+
+## XOR (`^`)
+
+Satisfied when **exactly one** of two specifications is true:
+
+```python
+either_or = Admin() ^ Moderator()
+# true only if one role matches, false if both or neither
+```
+
+## Filtering collections
+
+Use `spec.filter(iterable)` for lazy, memory-efficient filtering:
+
+```python
+even = Specification.of(lambda x: x % 2 == 0)
+list(even.filter([1, 2, 3, 4]))  # [2, 4]
+
+# works with generators
+result = even.filter(range(10**6))
+next(result)  # 0 — only evaluates one element at a time
+```
+
+## Debugging with `explain()`
+
+Use `explain(spec, candidate)` to see **why** a specification passed or failed:
+
+```python
+from zspec import explain
+
+result = explain(adult & verified, user)
+print(result.passed)   # False
+for child in result.children:
+    print(child.spec, child.passed)
+# Adult True
+# EmailVerified False
+```
+
+Returns an `ExplainNode` tree with `passed`, `spec`, and `children` fields.
+
 ## Type safety
 
 `Specification[T]` preserves the candidate type through composition:

@@ -3,7 +3,13 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
-from zspec import AndSpecification, NotSpecification, OrSpecification, Specification
+from zspec.specification import (
+    AndSpecification,
+    NotSpecification,
+    OrSpecification,
+    Specification,
+    XorSpecification,
+)
 
 
 class Translator[TResult](ABC):
@@ -18,6 +24,10 @@ class Translator[TResult](ABC):
                 return self._or(self.translate(left), self.translate(right))
             case NotSpecification(spec=inner):
                 return self._not(self.translate(inner))
+            case XorSpecification(left=left, right=right):
+                left_result = self.translate(left)
+                right_result = self.translate(right)
+                return self._xor(left_result, right_result)
             case _:
                 return self._translate(spec)
 
@@ -37,3 +47,13 @@ class Translator[TResult](ABC):
     @abstractmethod
     def _not(self, operand: TResult) -> TResult:
         raise NotImplementedError
+
+    def _xor(self, left: TResult, right: TResult) -> TResult:
+        """Combine with XOR — defaults to ``(A OR B) AND NOT (A AND B)``.
+
+        Override for backend-specific optimization.
+        """
+        return self._and(
+            self._or(left, right),
+            self._not(self._and(left, right)),
+        )

@@ -18,13 +18,22 @@ docs = [
 sqlalchemy = [
     "sqlalchemy>=2.0",
 ]
-pymongo = [
-    "pymongo>=4.0",
+django = [
+    "django>=4.2",
 ]
 
 [tool.pyrefly]
 preset = "strict"
 python-version = "3.14"
+strict-callable-subtyping = true
+check-unannotated-defs = true
+infer-return-types = "checked"
+
+[tool.pyrefly.errors]
+bad-override = true
+bad-override-mutable-attribute = true
+bad-override-param-name = true
+unbound-name = true
 
 [tool.ruff]
 target-version = "py314"
@@ -34,6 +43,7 @@ select = ["ALL"]
 ignore = [
     "TC001",
     "TC003",
+    "TC006",
     "D203",  # conflicts with D211
     "D213",  # conflicts with D212
 ]
@@ -42,6 +52,7 @@ ignore = [
 "tests/**" = [
     "D1",   # docstrings not required in tests
     "E402", # importorskip pattern
+    "PLR2004", # magic numbers are fine in tests
     "S101", # assert is fine in tests
     "SLF001", # private member access is fine in tests
 ]
@@ -59,6 +70,7 @@ build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
+    "django-stubs>=5.2.0",
     "pyrefly>=1.0.0",
     "pytest>=8.0.0",
     "ruff>=0.15.14",

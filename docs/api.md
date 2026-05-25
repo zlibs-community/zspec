@@ -21,6 +21,18 @@
     options:
         members: true
 
+::: zspec.XorSpecification
+    options:
+        members: true
+
+::: zspec.explain
+    options:
+        members: true
+
 ::: zspec.SqlTranslator
+    options:
+        members: true
+
+::: zspec.MongoTranslator
     options:
         members: true

@@ -1,6 +1,5 @@
 """Tests for SqlAlchemyTranslator."""
 
-from __future__ import annotations
 
 from typing import Any, override
 
@@ -31,7 +30,7 @@ class Positive(Specification[object]):
 
 class EvenSqlAlchemy(SqlAlchemyTranslator):
     @override
-    def _translate(self, spec: Specification[Any]) -> ColumnElement:
+    def _translate(self, spec: Specification[Any]) -> Any:
         match spec:
             case Even():
                 return sa.column("val") % 2 == 0

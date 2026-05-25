@@ -109,26 +109,22 @@ class TestAllOfAnyOf:
     def test_all_of_all_true(self) -> None:
         spec = Specification.all_of([Always(), Always(), Always()])
         assert spec is not None
-        assert spec(None) is True  # type: ignore[union-attr]
-
+        assert spec(None) is True
     def test_all_of_one_false(self) -> None:
         spec = Specification.all_of([Always(), Never(), Always()])
         assert spec is not None
-        assert spec(None) is False  # type: ignore[union-attr]
-
+        assert spec(None) is False
     def test_any_of_empty(self) -> None:
         assert Specification.any_of([]) is None
 
     def test_any_of_all_false(self) -> None:
         spec = Specification.any_of([Never(), Never()])
         assert spec is not None
-        assert spec(None) is False  # type: ignore[union-attr]
-
+        assert spec(None) is False
     def test_any_of_one_true(self) -> None:
         spec = Specification.any_of([Never(), Always(), Never()])
         assert spec is not None
-        assert spec(None) is True  # type: ignore[union-attr]
-
+        assert spec(None) is True
 
 class TestStringRepresentation:
     def test_leaf_str(self) -> None:

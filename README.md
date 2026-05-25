@@ -54,7 +54,7 @@ assert eligible.is_satisfied_by(product)  # same thing
 
 ## Features
 
-- **Composable** --- combine specs with `&` (and), `|` (or), `~` (not)
+- **Composable** --- combine specs with `&` (and), `|` (or), `^` (xor), `~` (not)
 - **Type-safe** --- generic `Specification[T]` preserves the candidate type
 - **Bulk combinators** --- `Specification.all_of(...)` and `Specification.any_of(...)`
 - **Zero dependencies** --- standard library only
@@ -66,14 +66,18 @@ assert eligible.is_satisfied_by(product)  # same thing
 |---|---|
 | `spec & other` | Both must be satisfied (AND) |
 | `spec \| other` | At least one must be satisfied (OR) |
+| `spec ^ other` | Exactly one must be satisfied (XOR) |
 | `~spec` | Negation (NOT) |
 | `spec(candidate)` | Shorthand for `is_satisfied_by` |
+| `Specification.of(fn)` | Create a spec from a callable |
+| `spec.filter(iterable)` | Lazy filter over a collection |
 | `Specification.all_of(specs)` | Reduce with AND, returns `None` for empty input |
 | `Specification.any_of(specs)` | Reduce with OR, returns `None` for empty input |
+| `explain(spec, candidate)` | Debug tree showing what passed/failed |
 
 ## Translators
 
-Convert specification trees to SQL, JSON, or strings:
+Convert specification trees to SQL, MongoDB filters, Django Q objects, or custom formats:
 
 ```python
 from zspec import SqlTranslator, SqlFragment, Specification

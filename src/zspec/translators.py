@@ -1,6 +1,6 @@
 """Built-in Translator implementations."""
 
-from typing import NamedTuple, override
+from typing import Any, NamedTuple, override
 
 from zspec.translator import Translator
 
@@ -50,3 +50,48 @@ class SqlTranslator(Translator[SqlFragment]):
     def _not(self, operand: SqlFragment) -> SqlFragment:
         """Negate."""
         return SqlFragment(f"NOT ({operand.sql})", operand.params)
+
+
+class MongoTranslator(Translator[dict[str, Any]]):
+    """Translate specifications into MongoDB filter documents.
+
+    Subclass and override ``_translate`` for each leaf specification::
+
+        class MyTranslator(MongoTranslator):
+            def _translate(self, spec: Specification[Any]) -> dict[str, Any]:
+                match spec:
+                    case InStock():
+                        return {"in_stock": True}
+                    case MinPrice(min_price=price):
+                        return {"price": {"$gte": price}}
+                    case _:
+                        raise NotImplementedError
+
+        translator = MyTranslator()
+        results = collection.find(
+            translator.translate(InStock() & MinPrice(100)),
+        )
+    """
+
+    @override
+    def _and(
+        self,
+        left: dict[str, Any],
+        right: dict[str, Any],
+    ) -> dict[str, Any]:
+        """Combine with ``$and``."""
+        return {"$and": [left, right]}
+
+    @override
+    def _or(
+        self,
+        left: dict[str, Any],
+        right: dict[str, Any],
+    ) -> dict[str, Any]:
+        """Combine with ``$or``."""
+        return {"$or": [left, right]}
+
+    @override
+    def _not(self, operand: dict[str, Any]) -> dict[str, Any]:
+        """Negate with ``$nor``."""
+        return {"$nor": [operand]}
