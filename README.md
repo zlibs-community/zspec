@@ -1,5 +1,9 @@
 # ZSpec
 
+[![PyPI](https://img.shields.io/pypi/v/zspec)](https://pypi.org/project/zspec/)
+[![Python](https://img.shields.io/pypi/pyversions/zspec)](https://pypi.org/project/zspec/)
+[![License](https://img.shields.io/pypi/l/zspec)](https://github.com/oek1ng/zspec/blob/master/LICENSE)
+
 Composable specification pattern for Python 3.14+.
 
 ## The problem

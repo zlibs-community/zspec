@@ -71,6 +71,7 @@ build-backend = "uv_build"
 [dependency-groups]
 dev = [
     "django-stubs>=5.2.0",
+    "pre-commit>=4.0",
     "pyrefly>=1.0.0",
     "pytest>=8.0.0",
     "ruff>=0.15.14",
