@@ -7,6 +7,9 @@ lint:
 test:
 	uv run pytest -q
 
+coverage:
+	uv run pytest -q --cov=zspec --cov-report=term-missing
+
 docs:
 	uv run mkdocs build -s
 

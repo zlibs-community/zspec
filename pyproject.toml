@@ -67,6 +67,11 @@ ignore = [
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 
+[tool.semantic_release]
+version_toml = ["pyproject.toml:project.version"]
+changelog_file = "CHANGELOG.md"
+commit_parser = "emoji"
+
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
@@ -80,7 +85,9 @@ dev = [
     "django-stubs>=5.2.0",
     "pre-commit>=4.0",
     "pyrefly>=1.0.0",
+    "pytest-cov>=6.0",
     "pytest>=8.0.0",
+    "python-semantic-release>=9.0",
     "ruff>=0.15.14",
 ]
 docs = [
