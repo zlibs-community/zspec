@@ -2,22 +2,18 @@
 
 Composable specification pattern for Python 3.14+.
 
-Define business rules as objects, then combine them with `&` (and), `|` (or), and `~` (not).
+Define business rules as objects, then combine them with `&`, `|`, `~` to express complex logic.
 
-## The problem
+[Get Started :material-arrow-right:](usage.md){ .md-button }
+[GitHub :fontawesome-brands-github:](https://github.com/oek1ng/zspec){ .md-button }
 
-Business rules tend to spread across your codebase. A check like *"is this order eligible for free shipping?"* might live in a service method, duplicated in a view, slightly different in a validation layer. When requirements change, you hunt down every copy and hope you found them all.
+## Why ZSpec?
 
-The Specification pattern solves this by turning each rule into a single, testable object. Combine them with `&`, `|`, `~` to express complex logic without writing new classes.
-
-## Why?
-
-The Specification pattern lets you:
-
-- **Reuse** business rules across the codebase
-- **Combine** simple rules into complex ones without writing new classes
-- **Test** rules in isolation
-- **Keep** domain logic out of your models
+| | |
+|---|---|
+| **Composable** | Combine specs with `&`, `|`, `^`, `~` — build complex rules from simple ones without new classes. |
+| **Zero dependencies** | Standard library only. Optional extras for SQLAlchemy and Django. |
+| **Type-safe** | Generic `Specification[T]` preserves candidate types through composition. Full pyrefly strict mode support. |
 
 ## Install
 
@@ -36,7 +32,6 @@ from zspec import Specification
 class Order:
     total: int
     is_paid: bool
-    items_count: int
 
 
 class Paid(Specification[Order]):
@@ -52,10 +47,19 @@ class MinimumAmount(Specification[Order]):
         return order.total >= self.amount
 
 
-# Compose
+# Compose with &, |, ~
 free_shipping = Paid() & MinimumAmount(500)
 
-order = Order(total=600, is_paid=True, items_count=3)
-assert free_shipping(order)  # callable
-assert free_shipping.is_satisfied_by(order)  # explicit
+order = Order(total=600, is_paid=True)
+assert free_shipping(order)
 ```
+
+## Operators at a glance
+
+| Operator | Description |
+|---|---|
+| `spec & other` | Both satisfied (AND) |
+| `spec \| other` | At least one satisfied (OR) |
+| `spec ^ other` | Exactly one satisfied (XOR) |
+| `~spec` | Negation (NOT) |
+| `spec(candidate)` | Shorthand for `is_satisfied_by` |

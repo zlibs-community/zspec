@@ -1,5 +1,7 @@
 """Tests for Specification.of(), filter(), reject(), partition(), true(), false()."""
 
+from functools import partial
+
 from zspec import Specification
 
 
@@ -27,6 +29,14 @@ class TestSpecOf:
         spec = Specification.of(is_positive)
         assert spec(5)
         assert "is_positive" in str(spec)
+
+    def test_of_without_name(self) -> None:
+        def gt(threshold: int, x: int) -> bool:
+            return x > threshold
+
+        spec = Specification.of(partial(gt, 5))
+        assert spec(10)
+        assert spec(3) is False
 
 
 class TestFilter:
@@ -72,6 +82,17 @@ class TestReject:
         result = even.reject([1, 3, 5])
         assert next(result) == 1
 
+    def test_reject_composite(self) -> None:
+        even = Specification.of(lambda x: x % 2 == 0)
+        positive = Specification.of(lambda x: x > 0)
+        spec = even & positive
+        assert list(spec.reject([2, 4, 6, 1, 3])) == [1, 3]
+
+    def test_reject_with_not(self) -> None:
+        even = Specification.of(lambda x: x % 2 == 0)
+        spec = ~even
+        assert list(spec.reject([1, 2, 3, 4])) == [2, 4]
+
 
 class TestPartition:
     def test_partition_empty(self) -> None:
@@ -98,6 +119,21 @@ class TestPartition:
         assert passed == [2, 4, 6]
         assert failed == [1, 3, 5]
 
+    def test_partition_with_not(self) -> None:
+        even = Specification.of(lambda x: x % 2 == 0)
+        spec = ~even
+        passed, failed = spec.partition([1, 2, 3, 4])
+        assert passed == [1, 3]
+        assert failed == [2, 4]
+
+    def test_partition_with_xor(self) -> None:
+        even = Specification.of(lambda x: x % 2 == 0)
+        positive = Specification.of(lambda x: x > 0)
+        spec = even ^ positive
+        passed, _ = spec.partition(range(1, 7))
+        assert 1 in passed  # odd but positive
+        assert 2 not in passed  # even AND positive → both true → xor false
+
 
 class TestTrueFalse:
     def test_true(self) -> None:
@@ -118,3 +154,11 @@ class TestTrueFalse:
         spec = Specification.false() | even
         assert spec(4)
         assert not spec(5)
+
+    def test_true_xor_true(self) -> None:
+        spec = Specification.true() ^ Specification.true()
+        assert not spec(None)
+
+    def test_true_xor_false(self) -> None:
+        spec = Specification.true() ^ Specification.false()
+        assert spec(None)
