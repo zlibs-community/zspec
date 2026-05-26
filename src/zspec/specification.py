@@ -1,11 +1,12 @@
 """Specification pattern — composable business rule objects."""
 
-
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Iterable, Iterator
 from functools import reduce
 from operator import and_, or_
 from typing import cast, override
+
+from zspec.utils import slots_of
 
 
 class Specification[T](ABC):
@@ -37,14 +38,24 @@ class Specification[T](ABC):
     @override
     def __repr__(self) -> str:
         """Return ``ClassName(attr=value, ...)`` for all slots."""
-        cls = type(self)
-        slots: list[str] = []
-        for c in cls.__mro__:
-            for s in getattr(c, "__slots__", ()):
-                if s not in slots:
-                    slots.append(s)
-        args = ", ".join(f"{s}={getattr(self, s)!r}" for s in slots)
-        return f"{cls.__name__}({args})"
+        args = ", ".join(
+            f"{s}={getattr(self, s)!r}" for s in slots_of(self)
+        )
+        return f"{type(self).__name__}({args})"
+
+    @override
+    def __eq__(self, other: object) -> bool:
+        if type(self) is not type(other):
+            return NotImplemented
+        return all(
+            getattr(self, s) == getattr(other, s) for s in slots_of(self)
+        )
+
+    @override
+    def __hash__(self) -> int:
+        return hash(
+            (type(self), tuple(getattr(self, s) for s in slots_of(self))),
+        )
 
     @override
     def __str__(self) -> str:

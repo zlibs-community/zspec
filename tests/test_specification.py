@@ -178,6 +178,67 @@ class TestRepr:
         assert repr(~Always()) == "NotSpecification(spec=Always())"
 
 
+class TestEquality:
+    def test_same_type_same_values_equal(self) -> None:
+        assert GreaterThan(10) == GreaterThan(10)
+
+    def test_same_type_different_values_not_equal(self) -> None:
+        assert GreaterThan(10) != GreaterThan(20)
+
+    def test_different_types_not_equal(self) -> None:
+        assert Always() != Never()
+
+    def test_and_equal(self) -> None:
+        a = Always() & Never()
+        b = Always() & Never()
+        assert a == b
+
+    def test_and_different(self) -> None:
+        a = Always() & Never()
+        b = Never() & Always()
+        assert a != b
+
+    def test_or_equal(self) -> None:
+        a = Always() | Never()
+        b = Always() | Never()
+        assert a == b
+
+    def test_not_equal(self) -> None:
+        assert ~Always() == ~Always()
+
+    def test_not_different(self) -> None:
+        assert ~Always() != ~Never()
+
+    def test_xor_equal(self) -> None:
+        a = Always() ^ Never()
+        b = Always() ^ Never()
+        assert a == b
+
+    def test_cross_type_not_equal(self) -> None:
+        assert (Always() & Never()) != (Always() | Never())
+
+    def test_nested_composite_equal(self) -> None:
+        a = Always() & (~Never() | Always())
+        b = Always() & (~Never() | Always())
+        assert a == b
+
+    def test_hash_equal_for_equal_specs(self) -> None:
+        a = Always() & (~Never() | Always())
+        b = Always() & (~Never() | Always())
+        assert hash(a) == hash(b)
+
+    def test_hash_different_for_different_specs(self) -> None:
+        assert hash(Always() & Never()) != hash(Always() | Never())
+
+    def test_usable_in_set(self) -> None:
+        specs = {Always(), Always(), Never()}
+        assert len(specs) == 2
+
+    def test_usable_as_dict_key(self) -> None:
+        d = {Always(): "yes", Never(): "no"}
+        assert d[Always()] == "yes"
+
+
 class TestTypeSafety:
     def test_generic_preserves_type(self) -> None:
         spec: Specification[int] = GreaterThan(10) & GreaterThan(20)
