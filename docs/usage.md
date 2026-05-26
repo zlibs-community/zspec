@@ -39,12 +39,20 @@ class Admin(Specification[User]):
     def is_satisfied_by(self, user: User) -> bool:
         return user.role == "admin"
 
+class Moderator(Specification[User]):
+    def is_satisfied_by(self, user: User) -> bool:
+        return user.role == "moderator"
+
 can_edit = Admin() | Moderator()
 ```
 
 ### NOT (`~`)
 
 ```python
+class Banned(Specification[User]):
+    def is_satisfied_by(self, user: User) -> bool:
+        return user.banned
+
 is_banned = Banned()
 is_active = ~is_banned
 ```
@@ -60,7 +68,6 @@ Returns `None` for an empty iterable. Pass ``default`` to avoid null checks:
 spec = Specification.all_of([
     Adult(),
     EmailVerified(),
-    HasTwoFactor(),
 ])
 
 # With a default for empty input
@@ -76,7 +83,6 @@ Returns `None` for an empty iterable. Pass ``default`` to avoid null checks:
 spec = Specification.any_of([
     Admin(),
     Moderator(),
-    Owner(),
 ])
 
 # With a default for empty input
@@ -152,6 +158,19 @@ class Product:
     in_stock: bool
 
 
+class InStock(Specification[Product]):
+    def is_satisfied_by(self, p: Product) -> bool:
+        return p.in_stock
+
+
+class MinPrice(Specification[Product]):
+    def __init__(self, threshold: int) -> None:
+        self.threshold = threshold
+
+    def is_satisfied_by(self, p: Product) -> bool:
+        return p.price >= self.threshold
+
+
 F = fields(Product)
 
 # Field proxies with comparison operators
@@ -218,6 +237,84 @@ cheap = Specification[Product].matching(price__lt=50)
 bargain = cheap & F.in_stock
 ```
 
+## Negation factory: `Specification.excluding()`
+
+Inverse of :meth:`~zspec.Specification.matching` — exclude anything that matches:
+
+```python
+# Exclude products that are too expensive or out of stock
+available = Specification[Product].excluding(
+    price__gt=1000,
+    in_stock=False,
+)
+```
+
+Empty ``excluding()`` returns ``true()`` (nothing excluded = accept everything).
+
+## Serialization: `to_dict` / `from_dict`
+
+Convert specification trees to plain dictionaries and back:
+
+```python
+from zspec import to_dict, from_dict
+
+# Serialize
+spec = Specification[Product].matching(price__gte=100, in_stock=True)
+data = to_dict(spec)
+# {
+#     "type": "AndSpecification",
+#     "left": {"type": "FieldSpec", "field": "price", "op": "gte", "value": 100},
+#     "right": {"type": "FieldSpec", "field": "in_stock", "op": "eq", "value": True},
+# }
+
+# Deserialize — identical spec, identical behavior
+spec2 = from_dict(data)
+assert spec == spec2
+```
+
+### Registering custom specs
+
+Decorate your ``Specification`` subclasses with :func:`~zspec.registered`
+to make them auto-discoverable by ``from_dict``:
+
+```python
+from zspec import registered
+
+@registered
+class InStock(Specification[Product]):
+    ...
+
+@registered
+class MinPrice(Specification[Product]):
+    ...
+
+# No registry dict needed
+spec = from_dict({"type": "MinPrice", "threshold": 100})
+```
+
+Pass a ``registry`` dict only when the class name in JSON
+differs from the Python class name.
+
+### Use case: rules stored as data
+
+When rules live in a config file or database, serialize them so
+they can be loaded and applied at runtime:
+
+```python
+import json
+from zspec import to_dict, from_dict
+
+# Save a rule
+rule = InStock() & MinPrice(100)
+with open("rules/eligible.json", "w") as f:
+    json.dump(to_dict(rule), f)
+
+# Load and apply — months later, without touching code
+data = json.load(open("rules/eligible.json"))
+spec = from_dict(data)
+results = list(spec.filter(products))
+```
+
 ## XOR (`^`)
 
 Satisfied when **exactly one** of two specifications is true:
@@ -266,11 +363,11 @@ passed, failed = even.partition([1, 2, 3, 4])
 `Specification.true()` and `Specification.false()` for dynamic composition:
 
 ```python
-spec = Specification.true()  # neutral start
-if min_price:
-    spec = spec & MinPrice(min_price)
+spec = Specification[Product].true()  # neutral start
+if min_price is not None:
+    spec = spec & Specification[Product].matching(price__gte=min_price)
 if in_stock_only:
-    spec = spec & InStock()
+    spec = spec & Specification[Product].matching(in_stock=True)
 ```
 
 These constants are singletons — `Specification.true() is Specification.true()`.
@@ -291,10 +388,6 @@ actual business rules.
 Specifications compare by type and slot values:
 
 ```python
-class MinPrice(Specification[Product]):
-    def __init__(self, price: int) -> None:
-        self.price = price
-
 MinPrice(100) == MinPrice(100)   # True
 MinPrice(100) == MinPrice(200)   # False
 ```
@@ -322,7 +415,7 @@ Use `explain(spec, candidate)` to see **why** a specification passed or failed:
 ```python
 from zspec import explain
 
-result = explain(adult & verified, user)
+result = explain(Adult() & EmailVerified(), user)
 print(result.passed)   # False
 for child in result.children:
     print(child.spec, child.passed)
@@ -340,8 +433,8 @@ Returns an `ExplainNode` tree with `passed`, `spec`, and `children` fields.
 user_spec: Specification[User] = Adult() & EmailVerified()
 # ^^ User preserved
 
-order_spec: Specification[Order] = Paid() & MinimumAmount(500)
-# ^^ Order preserved
+product_spec: Specification[Product] = InStock() & MinPrice(100)
+# ^^ Product preserved
 ```
 
 ## Nested composition
@@ -350,5 +443,5 @@ Operators work on any specification, including composed ones:
 
 ```python
 complex_spec = (Adult() & EmailVerified()) | Admin()
-# equivalent to: (adult AND verified) OR admin
+# equivalent to: (Adult AND EmailVerified) OR Admin
 ```

@@ -54,7 +54,7 @@ class TestMatching:
 
     def test_single_field_returns_field_spec(self) -> None:
         spec = Specification[Product].matching(price__gte=100)
-        assert type(spec).__name__ == "_FieldSpec"
+        assert type(spec).__name__ == "FieldSpec"
 
     def test_empty_returns_true(self) -> None:
         spec = Specification[Product].matching()

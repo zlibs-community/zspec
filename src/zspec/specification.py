@@ -24,13 +24,13 @@ class Specification[T](ABC):
         """Combine with *other* via logical AND."""
         if not isinstance(other, Specification):
             return NotImplemented
-        if isinstance(self, _FalseSpecification):
-            return cast(Specification[T], _FALSE_SPEC)
-        if isinstance(other, _FalseSpecification):
-            return cast(Specification[T], _FALSE_SPEC)
-        if isinstance(self, _TrueSpecification):
+        if isinstance(self, FalseSpecification):
+            return cast(Specification[T], FALSE_SPEC)
+        if isinstance(other, FalseSpecification):
+            return cast(Specification[T], FALSE_SPEC)
+        if isinstance(self, TrueSpecification):
             return other
-        if isinstance(other, _TrueSpecification):
+        if isinstance(other, TrueSpecification):
             return self
         return AndSpecification(left=self, right=other)
 
@@ -38,13 +38,13 @@ class Specification[T](ABC):
         """Combine with *other* via logical OR."""
         if not isinstance(other, Specification):
             return NotImplemented
-        if isinstance(self, _TrueSpecification):
-            return cast(Specification[T], _TRUE_SPEC)
-        if isinstance(other, _TrueSpecification):
-            return cast(Specification[T], _TRUE_SPEC)
-        if isinstance(self, _FalseSpecification):
+        if isinstance(self, TrueSpecification):
+            return cast(Specification[T], TRUE_SPEC)
+        if isinstance(other, TrueSpecification):
+            return cast(Specification[T], TRUE_SPEC)
+        if isinstance(self, FalseSpecification):
             return other
-        if isinstance(other, _FalseSpecification):
+        if isinstance(other, FalseSpecification):
             return self
         return OrSpecification(self, other)
 
@@ -52,13 +52,13 @@ class Specification[T](ABC):
         """Combine with *other* via logical XOR."""
         if not isinstance(other, Specification):
             return NotImplemented
-        if isinstance(self, _TrueSpecification):
+        if isinstance(self, TrueSpecification):
             return ~other
-        if isinstance(other, _TrueSpecification):
+        if isinstance(other, TrueSpecification):
             return ~self
-        if isinstance(self, _FalseSpecification):
+        if isinstance(self, FalseSpecification):
             return other
-        if isinstance(other, _FalseSpecification):
+        if isinstance(other, FalseSpecification):
             return self
         return XorSpecification(self, other)
 
@@ -141,12 +141,12 @@ class Specification[T](ABC):
     @classmethod
     def true(cls) -> Specification[T]:
         """Return a specification satisfied by **any** candidate."""
-        return cast(Specification[T], _TRUE_SPEC)
+        return cast(Specification[T], TRUE_SPEC)
 
     @classmethod
     def false(cls) -> Specification[T]:
         """Return a specification satisfied by **no** candidate."""
-        return cast(Specification[T], _FALSE_SPEC)
+        return cast(Specification[T], FALSE_SPEC)
 
     @classmethod
     def all_of(
@@ -212,7 +212,7 @@ class Specification[T](ABC):
             if not found:
                 field, op = key, "eq"
             specs.append(
-                cast(Specification[T], _FieldSpec(field, op, value)),
+                cast(Specification[T], FieldSpec(field, op, value)),
             )
         if not specs:
             return cls.true()
@@ -239,7 +239,7 @@ class Specification[T](ABC):
         return ~spec
 
 
-class _TrueSpecification[T](Specification[T]):
+class TrueSpecification[T](Specification[T]):
     """Internal: specification that is always satisfied."""
 
     __slots__ = ()
@@ -250,14 +250,14 @@ class _TrueSpecification[T](Specification[T]):
 
     @override
     def __invert__(self) -> Specification[T]:
-        return cast(Specification[T], _FALSE_SPEC)
+        return cast(Specification[T], FALSE_SPEC)
 
     @override
     def __str__(self) -> str:
         return "TRUE"
 
 
-class _FalseSpecification[T](Specification[T]):
+class FalseSpecification[T](Specification[T]):
     """Internal: specification that is never satisfied."""
 
     __slots__ = ()
@@ -268,15 +268,15 @@ class _FalseSpecification[T](Specification[T]):
 
     @override
     def __invert__(self) -> Specification[T]:
-        return cast(Specification[T], _TRUE_SPEC)
+        return cast(Specification[T], TRUE_SPEC)
 
     @override
     def __str__(self) -> str:
         return "FALSE"
 
 
-_TRUE_SPEC: Final[_TrueSpecification[Any]] = _TrueSpecification()
-_FALSE_SPEC: Final[_FalseSpecification[Any]] = _FalseSpecification()
+TRUE_SPEC: Final[TrueSpecification[Any]] = TrueSpecification()
+FALSE_SPEC: Final[FalseSpecification[Any]] = FalseSpecification()
 
 
 class AndSpecification[T](Specification[T]):
@@ -387,12 +387,13 @@ _OPERATOR_SYMBOLS: Final[dict[str, str]] = {
 }
 
 
-class _FieldSpec[T](Specification[T]):
+class FieldSpec[T](Specification[T]):
     """Internal: attribute comparison created by ``matching``."""
 
     __slots__ = ("field", "op", "value")
 
     def __init__(self, field: str, op: str, value: object) -> None:
+        """Initialize with *field* name, *op* code (``"gte"``), and *value*."""
         self.field = field
         self.op = op
         self.value = value
@@ -409,7 +410,7 @@ class _FieldSpec[T](Specification[T]):
 
 
 class _FieldProxy[T]:
-    """Internal: overloads comparison operators to build ``_FieldSpec``."""
+    """Internal: overloads comparison operators to build ``FieldSpec``."""
 
     __slots__ = ("_field",)
     __hash__: None = None  # type: ignore[assignment]  # unhashable
@@ -418,25 +419,25 @@ class _FieldProxy[T]:
         self._field = field
 
     def __gt__(self, value: object) -> Specification[T]:
-        return cast(Specification[T], _FieldSpec(self._field, "gt", value))
+        return cast(Specification[T], FieldSpec(self._field, "gt", value))
 
     def __ge__(self, value: object) -> Specification[T]:
-        return cast(Specification[T], _FieldSpec(self._field, "gte", value))
+        return cast(Specification[T], FieldSpec(self._field, "gte", value))
 
     def __lt__(self, value: object) -> Specification[T]:
-        return cast(Specification[T], _FieldSpec(self._field, "lt", value))
+        return cast(Specification[T], FieldSpec(self._field, "lt", value))
 
     def __le__(self, value: object) -> Specification[T]:
-        return cast(Specification[T], _FieldSpec(self._field, "lte", value))
+        return cast(Specification[T], FieldSpec(self._field, "lte", value))
 
     def __eq__(self, value: object) -> Specification[T]:  # type: ignore[override]
         if not isinstance(value, _FieldProxy):
-            return cast(Specification[T], _FieldSpec(self._field, "eq", value))
+            return cast(Specification[T], FieldSpec(self._field, "eq", value))
         return NotImplemented
 
     def __ne__(self, value: object) -> Specification[T]:  # type: ignore[override]
         if not isinstance(value, _FieldProxy):
-            return cast(Specification[T], _FieldSpec(self._field, "ne", value))
+            return cast(Specification[T], FieldSpec(self._field, "ne", value))
         return NotImplemented
 
 

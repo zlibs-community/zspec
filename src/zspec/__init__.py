@@ -6,8 +6,29 @@ from zspec.explain import (
 from zspec.explain import (
     explain as explain,
 )
+from zspec.serialize import (
+    from_dict as from_dict,
+)
+from zspec.serialize import (
+    registered as registered,
+)
+from zspec.serialize import (
+    to_dict as to_dict,
+)
+from zspec.specification import (
+    FALSE_SPEC as FALSE_SPEC,
+)
+from zspec.specification import (
+    TRUE_SPEC as TRUE_SPEC,
+)
 from zspec.specification import (
     AndSpecification as AndSpecification,
+)
+from zspec.specification import (
+    FalseSpecification as FalseSpecification,
+)
+from zspec.specification import (
+    FieldSpec as FieldSpec,
 )
 from zspec.specification import (
     NotSpecification as NotSpecification,
@@ -17,6 +38,9 @@ from zspec.specification import (
 )
 from zspec.specification import (
     Specification as Specification,
+)
+from zspec.specification import (
+    TrueSpecification as TrueSpecification,
 )
 from zspec.specification import (
     XorSpecification as XorSpecification,
