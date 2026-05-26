@@ -192,6 +192,48 @@ if in_stock_only:
     spec = spec & InStock()
 ```
 
+These constants are singletons — `Specification.true() is Specification.true()`.
+They fold away during composition so your spec trees stay clean:
+
+| Expression | Simplifies to |
+|------------|---------------|
+| `spec & true()` | `spec` |
+| `spec \| false()` | `spec` |
+| `~true()` | `false()` |
+| `~~spec` | `spec` |
+
+This means translators never see constant nodes — they only process your
+actual business rules.
+
+## Equality and hashing
+
+Specifications compare by type and slot values:
+
+```python
+class MinPrice(Specification[Product]):
+    def __init__(self, price: int) -> None:
+        self.price = price
+
+MinPrice(100) == MinPrice(100)   # True
+MinPrice(100) == MinPrice(200)   # False
+```
+
+Composite specs compare recursively:
+
+```python
+a = InStock() & MinPrice(100)
+b = InStock() & MinPrice(100)
+assert a == b
+assert hash(a) == hash(b)
+```
+
+This means specs work in sets and as dict keys:
+
+```python
+seen: set[Specification[Product]] = {InStock(), MinPrice(100)}
+unique = list({InStock(), InStock(), MinPrice(100)})  # 2 items
+```
+
 ## Debugging with `explain()`
 
 Use `explain(spec, candidate)` to see **why** a specification passed or failed:

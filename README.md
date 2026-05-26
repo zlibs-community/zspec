@@ -59,10 +59,10 @@ assert eligible.is_satisfied_by(product)  # same thing
 
 ## Features
 
-- **Composable** --- combine specs with `&` (and), `|` (or), `^` (xor), `~` (not)
-- **Type-safe** --- generic `Specification[T]` preserves the candidate type
-- **Bulk combinators** --- `Specification.all_of(...)` and `Specification.any_of(...)`
-- **Zero dependencies** --- standard library only
+- **Composable** — combine specs with `&` (and), `|` (or), `^` (xor), `~` (not)
+- **Type-safe** — generic `Specification[T]` preserves the candidate type
+- **Bulk combinators** — `Specification.all_of(...)` and `Specification.any_of(...)`
+- **Zero dependencies** — standard library only
 
 ## API overview
 
