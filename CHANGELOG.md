@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.7.0 (2026-05-26)
+
+### Features
+
+- Auto-registration
+  ([`3639798`](https://github.com/oek1ng/zspec/commit/36397984eda40a73dbf24bbde3e42c99d67e54c3))
+
+
 ## v1.6.0 (2026-05-26)
 
 ### Chores
