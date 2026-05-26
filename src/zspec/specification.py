@@ -155,32 +155,40 @@ class Specification[T](ABC):
     @classmethod
     def all_of(
         cls,
-        specs: Iterable[Specification[T]],
+        *specs: Specification[T],
         default: Specification[T] | None = None,
     ) -> Specification[T] | None:
         """Return a specification satisfied when **all** of *specs* are.
 
-        Returns *default* when *specs* is empty.
+        Accepts individual specs::
+
+            Specification.all_of(a, b, c)
+            Specification.all_of(*my_list)
+
+        Returns *default* when empty.
         """
-        items = list(specs)
-        if not items:
+        if not specs:
             return default
-        return reduce(and_, items)
+        return reduce(and_, specs)
 
     @classmethod
     def any_of(
         cls,
-        specs: Iterable[Specification[T]],
+        *specs: Specification[T],
         default: Specification[T] | None = None,
     ) -> Specification[T] | None:
-        """Return a specification satisfied when **any** of *specs* is.
+        """Return a specification satisfied when **any** of *specs* are.
 
-        Returns *default* when *specs* is empty.
+        Accepts individual specs::
+
+            Specification.any_of(a, b, c)
+            Specification.any_of(*my_list)
+
+        Returns *default* when empty.
         """
-        items = list(specs)
-        if not items:
+        if not specs:
             return default
-        return reduce(or_, items)
+        return reduce(or_, specs)
 
     @classmethod
     def matching(
@@ -222,7 +230,7 @@ class Specification[T](ABC):
             return cls.true()
         if len(specs) == 1:
             return specs[0]
-        return cast(Specification[T], cls.all_of(specs))
+        return cast(Specification[T], cls.all_of(*specs))
 
     @classmethod
     def excluding(

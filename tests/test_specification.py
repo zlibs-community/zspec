@@ -106,35 +106,35 @@ class TestComposition:
 
 class TestAllOfAnyOf:
     def test_all_of_empty(self) -> None:
-        assert Specification[object].all_of([]) is None
+        assert Specification[object].all_of() is None
 
     def test_all_of_empty_with_default(self) -> None:
-        result = Specification[object].all_of([], default=Specification[object].true())
+        result = Specification[object].all_of(default=Specification[object].true())
         assert result is not None
         assert result(None) is True
 
     def test_all_of_all_true(self) -> None:
-        spec = Specification[object].all_of([Always(), Always(), Always()])
+        spec = Specification[object].all_of(Always(), Always(), Always())
         assert spec is not None
         assert spec(None) is True
     def test_all_of_one_false(self) -> None:
-        spec = Specification[object].all_of([Always(), Never(), Always()])
+        spec = Specification[object].all_of(Always(), Never(), Always())
         assert spec is not None
         assert spec(None) is False
     def test_any_of_empty(self) -> None:
-        assert Specification[object].any_of([]) is None
+        assert Specification[object].any_of() is None
 
     def test_any_of_empty_with_default(self) -> None:
-        result = Specification[object].any_of([], default=Specification[object].false())
+        result = Specification[object].any_of(default=Specification[object].false())
         assert result is not None
         assert result(None) is False
 
     def test_any_of_all_false(self) -> None:
-        spec = Specification[object].any_of([Never(), Never()])
+        spec = Specification[object].any_of(Never(), Never())
         assert spec is not None
         assert spec(None) is False
     def test_any_of_one_true(self) -> None:
-        spec = Specification[object].any_of([Never(), Always(), Never()])
+        spec = Specification[object].any_of(Never(), Always(), Never())
         assert spec is not None
         assert spec(None) is True
 

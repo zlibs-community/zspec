@@ -85,32 +85,24 @@ is_active = ~is_banned
 
 ### `all_of`
 
-Satisfied when **every** specification in the iterable is satisfied.
-Returns `None` for an empty iterable. Pass ``default`` to avoid null checks:
+Satisfied when **every** specification passes. Pass ``default`` for empty input:
 
 ```python
-spec = Specification.all_of([
-    Adult(),
-    EmailVerified(),
-])
+spec = Specification.all_of(Adult(), EmailVerified())
 
 # With a default for empty input
-spec = Specification.all_of(filters, default=Specification.true())
+spec = Specification.all_of(*filters, default=Specification.true())
 ```
 
 ### `any_of`
 
-Satisfied when **at least one** specification in the iterable is satisfied.
-Returns `None` for an empty iterable. Pass ``default`` to avoid null checks:
+Satisfied when **at least one** specification passes. Pass ``default`` for empty input:
 
 ```python
-spec = Specification.any_of([
-    Admin(),
-    Moderator(),
-])
+spec = Specification.any_of(Admin(), Moderator())
 
 # With a default for empty input
-spec = Specification.any_of(filters, default=Specification.false())
+spec = Specification.any_of(*filters, default=Specification.false())
 ```
 
 ## Calling a specification
