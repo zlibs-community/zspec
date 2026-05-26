@@ -31,6 +31,9 @@ django = [
 polars = [
     "polars>=1.41.0",
 ]
+pandas = [
+    "pandas>=3.0.3",
+]
 
 [tool.pyrefly]
 preset = "strict"
@@ -52,6 +55,7 @@ python_version = "3.14"
 [[tool.mypy.overrides]]
 module = [
     "django.*",
+    "pandas.*",
     "polars.*",
     "sqlalchemy.*",
 ]
@@ -60,6 +64,7 @@ ignore_missing_imports = true
 [[tool.mypy.overrides]]
 module = [
     "tests.test_django",
+    "tests.test_pandas",
     "tests.test_polars",
     "tests.test_sqlalchemy",
 ]
