@@ -1,5 +1,6 @@
 """Specification pattern — composable business rule objects."""
 
+import operator
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Iterable, Iterator
 from functools import reduce
@@ -177,6 +178,32 @@ class Specification[T](ABC):
             return default
         return reduce(or_, items)
 
+    @classmethod
+    def matching(cls, **kwargs: object) -> Specification[T]:
+        """Create a specification from attribute comparisons.
+
+        Each key may use ``field__op`` syntax::
+
+            spec = Specification[Product].matching(price__gte=100, in_stock=True)
+            spec(product)  # product.price >= 100 and product.in_stock
+
+        Supported operators: ``eq``, ``ne``, ``gt``, ``gte``, ``lt``, ``lte``.
+        A plain field name without ``__op`` defaults to ``eq``.
+        """
+        specs: list[Specification[T]] = []
+        for key, value in kwargs.items():
+            field, found, op = key.rpartition("__")
+            if not found:
+                field, op = key, "eq"
+            specs.append(
+                cast(Specification[T], _FieldSpec(field, op, value)),
+            )
+        if not specs:
+            return cls.true()
+        if len(specs) == 1:
+            return specs[0]
+        return cast(Specification[T], cls.all_of(specs))
+
 
 class _TrueSpecification[T](Specification[T]):
     """Internal: specification that is always satisfied."""
@@ -305,3 +332,43 @@ class XorSpecification[T](Specification[T]):
     @override
     def __str__(self) -> str:
         return f"({self.left} XOR {self.right})"
+
+
+_OPERATORS: Final = {
+    "eq": operator.eq,
+    "ne": operator.ne,
+    "gt": operator.gt,
+    "gte": operator.ge,
+    "lt": operator.lt,
+    "lte": operator.le,
+}
+
+_OPERATOR_SYMBOLS: Final[dict[str, str]] = {
+    "eq": "==",
+    "ne": "!=",
+    "gt": ">",
+    "gte": ">=",
+    "lt": "<",
+    "lte": "<=",
+}
+
+
+class _FieldSpec[T](Specification[T]):
+    """Internal: attribute comparison created by ``matching``."""
+
+    __slots__ = ("field", "op", "value")
+
+    def __init__(self, field: str, op: str, value: object) -> None:
+        self.field = field
+        self.op = op
+        self.value = value
+
+    @override
+    def is_satisfied_by(self, candidate: T) -> bool:
+        actual = getattr(candidate, self.field)
+        return bool(_OPERATORS[self.op](cast(Any, actual), cast(Any, self.value)))
+
+    @override
+    def __str__(self) -> str:
+        symbol = _OPERATOR_SYMBOLS.get(self.op, self.op)
+        return f"{self.field} {symbol} {self.value!r}"

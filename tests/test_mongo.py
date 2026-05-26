@@ -28,7 +28,7 @@ class MinPrice(Specification[object]):
 
 class MyMongo(MongoTranslator):
     @override
-    def _translate(self, spec: Specification[Any]) -> Any:
+    def _translate(self, spec: Specification[object]) -> dict[str, Any]:
         match spec:
             case InStock():
                 return {"in_stock": True}

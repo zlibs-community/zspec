@@ -1,7 +1,7 @@
 """Tests for SqlAlchemyTranslator."""
 
 
-from typing import Any, override
+from typing import override
 
 import pytest
 
@@ -12,25 +12,25 @@ from zspec import Specification
 from zspec.contrib.sqlalchemy import SqlAlchemyTranslator
 
 
-class Even(Specification[object]):
+class Even(Specification[int]):
     __slots__ = ()
 
     @override
-    def is_satisfied_by(self, candidate: object) -> bool:
-        return isinstance(candidate, int) and candidate % 2 == 0
+    def is_satisfied_by(self, candidate: int) -> bool:
+        return candidate % 2 == 0
 
 
-class Positive(Specification[object]):
+class Positive(Specification[int]):
     __slots__ = ()
 
     @override
-    def is_satisfied_by(self, candidate: object) -> bool:
-        return isinstance(candidate, int) and candidate > 0
+    def is_satisfied_by(self, candidate: int) -> bool:
+        return candidate > 0
 
 
 class EvenSqlAlchemy(SqlAlchemyTranslator):
     @override
-    def _translate(self, spec: Specification[Any]) -> Any:
+    def _translate(self, spec: Specification[int]) -> ColumnElement[bool]:
         match spec:
             case Even():
                 return sa.column("val") % 2 == 0

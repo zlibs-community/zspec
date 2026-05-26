@@ -137,6 +137,50 @@ eligible = adult & active
 
 The lambda name is preserved in `repr()`.
 
+## Attribute factory: `Specification.matching()`
+
+Generate a specification directly from attribute comparisons — no subclass needed:
+
+```python
+from dataclasses import dataclass
+from zspec import Specification
+
+
+@dataclass
+class Product:
+    price: int
+    in_stock: bool
+
+
+spec = Specification[Product].matching(price__gte=100, in_stock=True)
+spec(Product(price=100, in_stock=True))   # True
+spec(Product(price=50, in_stock=True))    # False
+```
+
+### Operator suffixes
+
+Append `__op` to the field name. A bare field name defaults to `eq`:
+
+| Suffix | Meaning |
+|--------|---------|
+| *(no suffix)* | `==` |
+| `__eq` | `==` |
+| `__ne` | `!=` |
+| `__gt` | `>` |
+| `__gte` | `>=` |
+| `__lt` | `<` |
+| `__lte` | `<=` |
+
+### Combining with operators
+
+`matching()` returns a full specification — use `&`, `|`, `~` as usual:
+
+```python
+cheap = Specification[Product].matching(price__lt=50)
+available = Specification[Product].matching(in_stock=True)
+bargain = cheap & available
+```
+
 ## XOR (`^`)
 
 Satisfied when **exactly one** of two specifications is true:

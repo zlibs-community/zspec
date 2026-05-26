@@ -106,35 +106,35 @@ class TestComposition:
 
 class TestAllOfAnyOf:
     def test_all_of_empty(self) -> None:
-        assert Specification.all_of([]) is None
+        assert Specification[object].all_of([]) is None
 
     def test_all_of_empty_with_default(self) -> None:
-        result = Specification.all_of([], default=Specification.true())
+        result = Specification[object].all_of([], default=Specification[object].true())
         assert result is not None
         assert result(None) is True
 
     def test_all_of_all_true(self) -> None:
-        spec = Specification.all_of([Always(), Always(), Always()])
+        spec = Specification[object].all_of([Always(), Always(), Always()])
         assert spec is not None
         assert spec(None) is True
     def test_all_of_one_false(self) -> None:
-        spec = Specification.all_of([Always(), Never(), Always()])
+        spec = Specification[object].all_of([Always(), Never(), Always()])
         assert spec is not None
         assert spec(None) is False
     def test_any_of_empty(self) -> None:
-        assert Specification.any_of([]) is None
+        assert Specification[object].any_of([]) is None
 
     def test_any_of_empty_with_default(self) -> None:
-        result = Specification.any_of([], default=Specification.false())
+        result = Specification[object].any_of([], default=Specification[object].false())
         assert result is not None
         assert result(None) is False
 
     def test_any_of_all_false(self) -> None:
-        spec = Specification.any_of([Never(), Never()])
+        spec = Specification[object].any_of([Never(), Never()])
         assert spec is not None
         assert spec(None) is False
     def test_any_of_one_true(self) -> None:
-        spec = Specification.any_of([Never(), Always(), Never()])
+        spec = Specification[object].any_of([Never(), Always(), Never()])
         assert spec is not None
         assert spec(None) is True
 
@@ -243,51 +243,51 @@ class TestEquality:
 
 class TestSimplify:
     def test_and_with_false_is_false(self) -> None:
-        result = Always() & Specification.false()
-        assert result is Specification.false()
+        result = Always() & Specification[object].false()
+        assert result is Specification[object].false()
 
     def test_false_and_spec_is_false(self) -> None:
-        result = Specification.false() & Always()
-        assert result is Specification.false()
+        result = Specification[object].false() & Always()
+        assert result is Specification[object].false()
 
     def test_and_with_true_is_spec(self) -> None:
-        result = Always() & Specification.true()
+        result = Always() & Specification[object].true()
         assert result == Always()
 
     def test_true_and_spec_is_spec(self) -> None:
-        result = Specification.true() & Always()
+        result = Specification[object].true() & Always()
         assert result == Always()
 
     def test_or_with_true_is_true(self) -> None:
-        result = Always() | Specification.true()
-        assert result is Specification.true()
+        result = Always() | Specification[object].true()
+        assert result is Specification[object].true()
 
     def test_true_or_spec_is_true(self) -> None:
-        result = Specification.true() | Never()
-        assert result is Specification.true()
+        result = Specification[object].true() | Never()
+        assert result is Specification[object].true()
 
     def test_or_with_false_is_spec(self) -> None:
-        result = Always() | Specification.false()
+        result = Always() | Specification[object].false()
         assert result == Always()
 
     def test_false_or_spec_is_spec(self) -> None:
-        result = Specification.false() | Always()
+        result = Specification[object].false() | Always()
         assert result == Always()
 
     def test_xor_with_true_is_not(self) -> None:
-        result = Always() ^ Specification.true()
+        result = Always() ^ Specification[object].true()
         assert result == ~Always()
 
     def test_true_xor_spec_is_not(self) -> None:
-        result = Specification.true() ^ Always()
+        result = Specification[object].true() ^ Always()
         assert result == ~Always()
 
     def test_xor_with_false_is_spec(self) -> None:
-        result = Always() ^ Specification.false()
+        result = Always() ^ Specification[object].false()
         assert result == Always()
 
     def test_false_xor_spec_is_spec(self) -> None:
-        result = Specification.false() ^ Always()
+        result = Specification[object].false() ^ Always()
         assert result == Always()
 
     def test_double_negation(self) -> None:
@@ -295,19 +295,19 @@ class TestSimplify:
         assert ~~spec is spec
 
     def test_not_true_is_false(self) -> None:
-        assert ~Specification.true() is Specification.false()
+        assert ~Specification[object].true() is Specification[object].false()
 
     def test_not_false_is_true(self) -> None:
-        assert ~Specification.false() is Specification.true()
+        assert ~Specification[object].false() is Specification[object].true()
 
     def test_deep_nested_simplifies(self) -> None:
         """True & (False | (spec & True)) simplifies to spec."""
-        spec = Always() & Specification.false()
-        assert spec is Specification.false()
+        spec = Always() & Specification[object].false()
+        assert spec is Specification[object].false()
 
     def test_true_and_false_is_false(self) -> None:
-        result = Specification.true() & Specification.false()
-        assert result is Specification.false()
+        result = Specification[object].true() & Specification[object].false()
+        assert result is Specification[object].false()
 
 
 class TestTypeSafety:
@@ -338,5 +338,5 @@ class TestOperatorNotImplemented:
             def __rand__(self, other: object) -> str:
                 return f"rand({other})"
 
-        result = Always() & Custom()  # type: ignore[operator]
+        result = Always() & Custom()
         assert result == "rand(Always)"

@@ -1,6 +1,6 @@
 """Tests for Translator and SqlTranslator."""
 
-from typing import Any, override
+from typing import override
 
 import pytest
 
@@ -30,7 +30,7 @@ class Positive(Specification[int]):
 
 class EvenSql(SqlTranslator):
     @override
-    def _translate(self, spec: Specification[Any]) -> Any:
+    def _translate(self, spec: Specification[int]) -> SqlFragment:
         match spec:
             case Even():
                 return SqlFragment("value %% 2 = 0", ())
@@ -44,19 +44,19 @@ class TestTranslator:
     def test_translate_leaf(self) -> None:
         class StrTranslator(Translator[str]):
             @override
-            def _translate(self, spec: Specification[Any]) -> Any:
+            def _translate(self, spec: Specification[int]) -> str:
                 return type(spec).__name__
 
             @override
-            def _and(self, left: Any, right: Any) -> Any:
+            def _and(self, left: str, right: str) -> str:
                 return f"({left} AND {right})"
 
             @override
-            def _or(self, left: Any, right: Any) -> Any:
+            def _or(self, left: str, right: str) -> str:
                 return f"({left} OR {right})"
 
             @override
-            def _not(self, operand: Any) -> Any:
+            def _not(self, operand: str) -> str:
                 return f"NOT ({operand})"
 
         t = StrTranslator()
@@ -65,19 +65,19 @@ class TestTranslator:
     def test_translate_and(self) -> None:
         class StrTranslator(Translator[str]):
             @override
-            def _translate(self, spec: Specification[Any]) -> Any:
+            def _translate(self, spec: Specification[int]) -> str:
                 return type(spec).__name__
 
             @override
-            def _and(self, left: Any, right: Any) -> Any:
+            def _and(self, left: str, right: str) -> str:
                 return f"({left} AND {right})"
 
             @override
-            def _or(self, left: Any, right: Any) -> Any:
+            def _or(self, left: str, right: str) -> str:
                 return f"({left} OR {right})"
 
             @override
-            def _not(self, operand: Any) -> Any:
+            def _not(self, operand: str) -> str:
                 return f"NOT ({operand})"
 
         t = StrTranslator()
@@ -87,19 +87,19 @@ class TestTranslator:
     def test_translate_nested(self) -> None:
         class StrTranslator(Translator[str]):
             @override
-            def _translate(self, spec: Specification[Any]) -> Any:
+            def _translate(self, spec: Specification[int]) -> str:
                 return type(spec).__name__
 
             @override
-            def _and(self, left: Any, right: Any) -> Any:
+            def _and(self, left: str, right: str) -> str:
                 return f"({left} AND {right})"
 
             @override
-            def _or(self, left: Any, right: Any) -> Any:
+            def _or(self, left: str, right: str) -> str:
                 return f"({left} OR {right})"
 
             @override
-            def _not(self, operand: Any) -> Any:
+            def _not(self, operand: str) -> str:
                 return f"NOT ({operand})"
 
         t = StrTranslator()
@@ -109,19 +109,19 @@ class TestTranslator:
     def test_translate_xor(self) -> None:
         class StrTranslator(Translator[str]):
             @override
-            def _translate(self, spec: Specification[Any]) -> Any:
+            def _translate(self, spec: Specification[int]) -> str:
                 return type(spec).__name__
 
             @override
-            def _and(self, left: Any, right: Any) -> Any:
+            def _and(self, left: str, right: str) -> str:
                 return f"({left} AND {right})"
 
             @override
-            def _or(self, left: Any, right: Any) -> Any:
+            def _or(self, left: str, right: str) -> str:
                 return f"({left} OR {right})"
 
             @override
-            def _not(self, operand: Any) -> Any:
+            def _not(self, operand: str) -> str:
                 return f"NOT ({operand})"
 
         t = StrTranslator()

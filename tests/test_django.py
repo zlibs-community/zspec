@@ -1,7 +1,7 @@
 """Tests for DjangoQTranslator."""
 
 
-from typing import Any, override
+from typing import override
 
 import pytest
 
@@ -42,7 +42,7 @@ class MinPrice(Specification[object]):
 
 class MyDjango(DjangoQTranslator):
     @override
-    def _translate(self, spec: Specification[Any]) -> Any:
+    def _translate(self, spec: Specification[object]) -> Q:
         match spec:
             case InStock():
                 return Q(in_stock=True)
