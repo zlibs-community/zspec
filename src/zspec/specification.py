@@ -21,6 +21,8 @@ class Specification[T](ABC):
 
     def __and__(self, other: Specification[T]) -> Specification[T]:
         """Combine with *other* via logical AND."""
+        if not isinstance(other, Specification):
+            return NotImplemented
         if isinstance(self, _FalseSpecification):
             return cast(Specification[T], _FALSE_SPEC)
         if isinstance(other, _FalseSpecification):
@@ -33,6 +35,8 @@ class Specification[T](ABC):
 
     def __or__(self, other: Specification[T]) -> Specification[T]:
         """Combine with *other* via logical OR."""
+        if not isinstance(other, Specification):
+            return NotImplemented
         if isinstance(self, _TrueSpecification):
             return cast(Specification[T], _TRUE_SPEC)
         if isinstance(other, _TrueSpecification):
@@ -45,6 +49,8 @@ class Specification[T](ABC):
 
     def __xor__(self, other: Specification[T]) -> Specification[T]:
         """Combine with *other* via logical XOR."""
+        if not isinstance(other, Specification):
+            return NotImplemented
         if isinstance(self, _TrueSpecification):
             return ~other
         if isinstance(other, _TrueSpecification):

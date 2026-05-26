@@ -2,6 +2,8 @@
 
 from typing import override
 
+import pytest
+
 from zspec import Specification
 
 
@@ -312,3 +314,29 @@ class TestTypeSafety:
     def test_generic_preserves_type(self) -> None:
         spec: Specification[int] = GreaterThan(10) & GreaterThan(20)
         assert spec(25)
+
+
+class TestOperatorNotImplemented:
+    def test_and_with_non_spec_returns_notimplemented(self) -> None:
+        with pytest.raises(TypeError, match="unsupported operand"):
+            Always() & "bad"  # type: ignore[operator]
+
+    def test_or_with_non_spec_returns_notimplemented(self) -> None:
+        with pytest.raises(TypeError, match="unsupported operand"):
+            Always() | 42  # type: ignore[operator]
+
+    def test_xor_with_non_spec_returns_notimplemented(self) -> None:
+        with pytest.raises(TypeError, match="unsupported operand"):
+            Always() ^ None  # type: ignore[operator]
+
+    def test_and_with_non_spec_reversed(self) -> None:
+        with pytest.raises(TypeError, match="unsupported operand"):
+            "bad" & Always()  # type: ignore[operator]
+
+    def test_rand_supports_custom_type(self) -> None:
+        class Custom:
+            def __rand__(self, other: object) -> str:
+                return f"rand({other})"
+
+        result = Always() & Custom()  # type: ignore[operator]
+        assert result == "rand(Always)"

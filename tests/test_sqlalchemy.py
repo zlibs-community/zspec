@@ -63,6 +63,18 @@ class TestSqlAlchemyTranslator:
         assert " AND " in str(result)
         assert "(" in str(result)
 
+    def test_or(self) -> None:
+        t = EvenSqlAlchemy()
+        result = t.translate(Even() | Positive())
+        assert " OR " in str(result)
+
+    def test_xor(self) -> None:
+        t = EvenSqlAlchemy()
+        result = t.translate(Even() ^ Positive())
+        assert "AND" in str(result)
+        assert "OR" in str(result)
+        assert "NOT" in str(result)
+
     def test_abstract_not_instantiable(self) -> None:
         with pytest.raises(TypeError):
             SqlAlchemyTranslator()  # type: ignore[abstract]
