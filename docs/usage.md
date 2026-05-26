@@ -288,23 +288,18 @@ spec2 = from_dict(data)
 assert spec == spec2
 ```
 
-### Registering custom specs
+### Auto-registration
 
-Decorate your ``Specification`` subclasses with :func:`~zspec.registered`
-to make them auto-discoverable by ``from_dict``:
+All ``Specification`` subclasses are auto-discovered by ``from_dict`` —
+no decorator or manual registry needed:
 
 ```python
-from zspec import registered
-
-@registered
 class InStock(Specification[Product]):
     ...
 
-@registered
 class MinPrice(Specification[Product]):
     ...
 
-# No registry dict needed
 spec = from_dict({"type": "MinPrice", "threshold": 100})
 ```
 

@@ -23,24 +23,6 @@ _BUILTINS: dict[str, type[Specification[Any]]] = {
     "FieldSpec": FieldSpec,
 }
 
-_auto_registry: dict[str, type[Specification[Any]]] = {}
-
-
-def registered[TSpec](cls: type[TSpec]) -> type[TSpec]:
-    """Register a ``Specification`` subclass for deserialization.
-
-    Registered classes are discovered automatically by :func:`from_dict` —
-    no manual ``registry`` dict needed.
-
-    Usage::
-
-        @registered
-        class InStock(Specification[Product]):
-            ...
-    """
-    _auto_registry[cls.__name__] = cast(type[Specification[Any]], cls)
-    return cls
-
 
 def to_dict(spec: Specification[Any]) -> dict[str, object]:
     """Serialize *spec* to a plain dictionary.
@@ -118,7 +100,7 @@ def from_dict(
         spec = from_dict({"type": "MinPrice", "threshold": 100})
     """
     reg: dict[str, type[Specification[Any]]] = {**_BUILTINS}
-    reg.update(_auto_registry)
+    reg.update(Specification.registry)
     if registry is not None:
         reg.update(registry)
 

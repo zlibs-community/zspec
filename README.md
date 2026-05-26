@@ -97,16 +97,12 @@ print(explain(eligible, product))
 ## Serialization
 
 ```python
-from zspec import to_dict, from_dict, registered
-
-@registered
-class InStock(Specification[Product]):
-    ...
+from zspec import to_dict, from_dict
 
 # Save
 json.dump(to_dict(InStock() & MinPrice(100)), f)
 
-# Load — @registered specs are auto-discovered
+# Load — specs are auto-discovered
 spec = from_dict(json.load(f))
 ```
 

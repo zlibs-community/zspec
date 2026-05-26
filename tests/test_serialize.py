@@ -6,7 +6,6 @@ from typing import Any, ClassVar, override
 from zspec import (
     Specification,
     from_dict,
-    registered,
     to_dict,
 )
 
@@ -176,7 +175,6 @@ class TestRoundtrip:
         assert result == original
 
 
-@registered
 class _Tagged(Specification[object]):
     __slots__ = ("label",)
 
@@ -188,7 +186,7 @@ class _Tagged(Specification[object]):
         return True
 
 
-class TestRegistered:
+class TestAutoDiscovery:
     def test_auto_discovered(self) -> None:
         spec = _Tagged("greeting")
         restored = from_dict(to_dict(spec))

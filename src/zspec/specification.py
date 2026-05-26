@@ -7,7 +7,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Callable, Iterable, Iterator
 from functools import reduce
 from operator import and_, or_
-from typing import Any, Final, cast, override
+from typing import Any, ClassVar, Final, cast, override
 
 from zspec.utils import slots_of
 
@@ -16,6 +16,12 @@ class Specification[T](ABC):
     """Abstract specification that can be combined with ``&``, ``|``, ``~``, ``^``."""
 
     __slots__: tuple[str, ...] = ()
+    registry: ClassVar[dict[str, type[Specification[Any]]]] = {}
+
+    def __init_subclass__(cls, **kwargs: object) -> None:
+        """Auto-register subclass for :func:`~zspec.from_dict`."""
+        super().__init_subclass__(**kwargs)
+        cls.registry[cls.__name__] = cls
 
     @abstractmethod
     def is_satisfied_by(self, candidate: T) -> bool:

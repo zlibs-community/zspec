@@ -13,9 +13,6 @@ from zspec.serialize import (
     from_dict as from_dict,
 )
 from zspec.serialize import (
-    registered as registered,
-)
-from zspec.serialize import (
     to_dict as to_dict,
 )
 from zspec.specification import (
