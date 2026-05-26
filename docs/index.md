@@ -54,9 +54,9 @@ assert free_shipping(order)
 | | |
 |---|---|
 | :material-puzzle: **Composable** | `&` `\|` `^` `~` — build complex rules from simple ones. No new classes needed. |
-| :material-package-variant-closed: **Zero dependencies** | Standard library only. Optional extras for SQLAlchemy, Django, and Polars. |
+| :material-package-variant-closed: **Zero dependencies** | Standard library only. Optional extras for SQLAlchemy, Django, Polars, and Pandas. |
 | :material-shield-check: **Type-safe** | Generic `Specification[T]` preserves candidate types. Full pyrefly strict mode. |
-| :material-database: **Database translators** | One spec → in-memory check, SQL, MongoDB, Django Q, or Polars expression. |
+| :material-database: **Database translators** | One spec → in-memory check, SQL, MongoDB, Django Q, Polars, or Pandas expression. |
 | :material-file-code: **Serializable** | Serialize rules to JSON. Store in configs, databases, or send over API. |
 | :material-bug: **Debuggable** | `explain()` shows which rules passed and failed — as an ASCII tree. |
 

@@ -66,9 +66,9 @@ spec = Specification[Product].matching(
 | | |
 |---|---|
 | **Composable** | `&` `\|` `^` `~` — build complex rules from simple ones without new classes |
-| **Zero dependencies** | Standard library only. Optional extras for SQLAlchemy, Django, and Polars |
+| **Zero dependencies** | Standard library only. Optional extras for SQLAlchemy, Django, Polars, and Pandas |
 | **Type-safe** | Generic `Specification[T]` preserves candidate types through composition |
-| **Database translators** | One spec → SQL, MongoDB, Django Q, SQLAlchemy, or Polars expression |
+| **Database translators** | One spec → SQL, MongoDB, Django Q, SQLAlchemy, Polars, or Pandas expression |
 | **Serializable** | `to_dict()` / `from_dict()` — store rules in JSON configs or databases |
 | **Debuggable** | `explain()` prints a PASS / FAIL tree for every node |
 
@@ -127,6 +127,9 @@ MySA().translate(eligible)           # ColumnElement[bool]
 
 # Polars
 MyPolars().translate(eligible)       # pl.Expr
+
+# Pandas
+MyPandas().translate(eligible)       # query string
 ```
 
 ## License

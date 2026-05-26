@@ -229,6 +229,51 @@ df = pl.DataFrame({"price": [50, 200], "in_stock": [True, True]})
 result = df.filter(translator.translate(InStock() & MinPrice(100)))
 ```
 
+### PandasTranslator
+
+Generate Pandas query strings. Install with ``pip install zspec[pandas]``:
+
+```python
+from dataclasses import dataclass
+import pandas as pd
+from zspec import Specification
+from zspec.contrib.pandas import PandasTranslator
+
+
+@dataclass
+class Product:
+    price: int
+    in_stock: bool
+
+
+class InStock(Specification[Product]):
+    def is_satisfied_by(self, candidate: Product) -> bool:
+        return candidate.in_stock
+
+
+class MinPrice(Specification[Product]):
+    def __init__(self, min_price: int) -> None:
+        self.min_price = min_price
+
+    def is_satisfied_by(self, candidate: Product) -> bool:
+        return candidate.price >= self.min_price
+
+
+class MyTranslator(PandasTranslator):
+    def _translate(self, spec: Specification[Product]) -> str:
+        match spec:
+            case InStock():
+                return "in_stock == True"
+            case MinPrice(min_price=price):
+                return f"price >= {price}"
+            case _:
+                return super()._translate(spec)
+
+translator = MyTranslator()
+df = pd.DataFrame({"price": [50, 200], "in_stock": [True, True]})
+result = df.query(translator.translate(InStock() & MinPrice(100)))
+```
+
 ## Writing a custom translator
 
 Subclass `Translator[TResult]` and implement four methods:

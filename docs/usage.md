@@ -3,9 +3,9 @@
 **Quick nav:** [Composition](#composition-operators) ·
 [Factories](#quick-factory-specificationof) ·
 [Filtering](#filtering-collections) ·
-[Translators](#translators) ·
+[Translators](translator.md) ·
 [Debugging](#debugging-with-explain) ·
-[Serialization](#serialization-todict-fromdict)
+[Serialization](#serialization-to_dict-from_dict)
 
 ## Defining a specification
 

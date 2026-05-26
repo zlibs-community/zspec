@@ -105,8 +105,9 @@ sql = SqlTranslator().translate(eligible)  # WHERE price >= %s AND in_stock
 # Same spec → MongoDB
 mongo = MongoTranslator().translate(eligible)  # {$and: [{price: {$gte: 100}}, {in_stock: true}]}
 
-# Same spec → Polars DataFrame
+# Same spec → Polars / Pandas DataFrames
 df.filter(PolarsTranslator().translate(eligible))
+df.query(PandasTranslator().translate(eligible))
 ```
 
 ## Negate a set of rules
