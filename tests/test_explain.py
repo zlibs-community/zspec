@@ -3,7 +3,7 @@
 
 from typing import override
 
-from zspec import Specification
+from zspec import Specification, to_ascii
 from zspec.explain import ExplainNode, explain
 
 
@@ -81,3 +81,38 @@ class TestExplain:
         assert node.passed is True
         assert node.spec == "test"
         assert node.children == []
+
+
+class TestToAscii:
+    def test_leaf(self) -> None:
+        result = to_ascii(Always())
+        assert result == "Always"
+
+    def test_and(self) -> None:
+        result = to_ascii(Always() & Never())
+        assert result == "(Always AND Never)\n├── Always\n└── Never"
+
+    def test_or(self) -> None:
+        result = to_ascii(Always() | Never())
+        assert result == "(Always OR Never)\n├── Always\n└── Never"
+
+    def test_not(self) -> None:
+        result = to_ascii(~Always())
+        assert result == "NOT (Always)\n└── Always"
+
+    def test_xor(self) -> None:
+        result = to_ascii(Always() ^ Never())
+        assert result == "(Always XOR Never)\n├── Always\n└── Never"
+
+    def test_nested(self) -> None:
+        result = to_ascii(Always() & (~Never() | Always()))
+        lines = result.split("\n")
+        assert lines[0] == "(Always AND (NOT (Never) OR Always))"
+        assert "├── Always" in lines
+        assert "└── (NOT (Never) OR Always)" in lines
+
+    def test_true(self) -> None:
+        assert to_ascii(Specification.true()) == "TRUE"
+
+    def test_false(self) -> None:
+        assert to_ascii(Specification.false()) == "FALSE"

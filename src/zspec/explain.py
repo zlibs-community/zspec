@@ -1,5 +1,4 @@
-"""Explain why a candidate did or did not satisfy a specification."""
-
+"""Explain and visualize specification trees."""
 
 from dataclasses import dataclass, field
 from typing import Any
@@ -74,3 +73,43 @@ def explain(spec: Specification[Any], candidate: object) -> ExplainNode:
                 passed=spec.is_satisfied_by(candidate),
                 spec=str(spec),
             )
+
+
+def to_ascii(spec: Specification[Any]) -> str:
+    """Return an ASCII tree visualization of *spec*.
+
+    Usage::
+
+        print(to_ascii(eligible))
+        # AND
+        # ├── price >= 100
+        # └── in_stock == True
+    """
+    return "\n".join(_ascii_lines(spec))
+
+
+def _ascii_lines(spec: Specification[Any]) -> list[str]:
+    lines = [str(spec)]
+    children = list(_spec_children(spec))
+    for i, child in enumerate(children):
+        is_last = i == len(children) - 1
+        child_lines = _ascii_lines(child)
+        connector = "└── " if is_last else "├── "
+        continuation = "    " if is_last else "│   "
+        lines.append(connector + child_lines[0])
+        lines.extend(continuation + line for line in child_lines[1:])
+    return lines
+
+
+def _spec_children(spec: Specification[Any]) -> list[Specification[Any]]:
+    match spec:
+        case AndSpecification(left=left, right=right):
+            return [left, right]
+        case OrSpecification(left=left, right=right):
+            return [left, right]
+        case XorSpecification(left=left, right=right):
+            return [left, right]
+        case NotSpecification(spec=inner):
+            return [inner]
+        case _:
+            return []

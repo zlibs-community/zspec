@@ -6,6 +6,9 @@ from zspec.explain import (
 from zspec.explain import (
     explain as explain,
 )
+from zspec.explain import (
+    to_ascii as to_ascii,
+)
 from zspec.serialize import (
     from_dict as from_dict,
 )
