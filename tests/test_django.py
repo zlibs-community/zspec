@@ -82,6 +82,12 @@ class TestDjangoQTranslator:
         expected = Q(in_stock=True) & (~Q(price__gte=50) | Q(price__gte=100))
         assert result == expected
 
+    def test_xor(self) -> None:
+        t = MyDjango()
+        result = t.translate(InStock() ^ MinPrice(100))
+        expected = Q(in_stock=True) ^ Q(price__gte=100)
+        assert result == expected
+
     def test_abstract_not_instantiable(self) -> None:
         with pytest.raises(TypeError):
             DjangoQTranslator()  # type: ignore[abstract]

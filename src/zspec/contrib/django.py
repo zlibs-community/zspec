@@ -47,3 +47,8 @@ class DjangoQTranslator(Translator[Q]):
     def _not(self, operand: Q) -> Q:
         """Negate with ``~``."""
         return ~operand
+
+    @override
+    def _xor(self, left: Q, right: Q) -> Q:
+        """Combine with native ``^``."""
+        return left ^ right

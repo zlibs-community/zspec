@@ -94,3 +94,12 @@ class MongoTranslator(Translator[dict[str, Any]]):
     def _not(self, operand: dict[str, Any]) -> dict[str, Any]:
         """Negate with ``$nor``."""
         return {"$nor": [operand]}
+
+    @override
+    def _xor(
+        self,
+        left: dict[str, Any],
+        right: dict[str, Any],
+    ) -> dict[str, Any]:
+        """Combine with native ``$xor``."""
+        return {"$xor": [left, right]}

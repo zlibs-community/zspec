@@ -82,6 +82,13 @@ class TestMongoTranslator:
             ],
         }
 
+    def test_xor(self) -> None:
+        t = MyMongo()
+        result = t.translate(InStock() ^ MinPrice(100))
+        assert result == {
+            "$xor": [{"in_stock": True}, {"price": {"$gte": 100}}],
+        }
+
     def test_abstract_not_instantiable(self) -> None:
         with pytest.raises(TypeError):
             MongoTranslator()  # type: ignore[abstract]
