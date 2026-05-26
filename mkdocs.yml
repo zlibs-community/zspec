@@ -1,32 +1,50 @@
 site_name: zspec
-site_description: Composable specification pattern for Python
+site_description: Composable specification pattern for Python 3.14+
 repo_url: https://github.com/oek1ng/zspec
+repo_name: oek1ng/zspec
+
 theme:
   name: material
+  custom_dir: docs/overrides
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: indigo
+      primary: custom
+      accent: teal
       toggle:
-        icon: material/brightness-7
+        icon: material/weather-night
         name: Switch to dark
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: indigo
+      primary: custom
+      accent: teal
       toggle:
-        icon: material/brightness-4
+        icon: material/weather-sunny
         name: Switch to light
   features:
     - content.code.copy
     - content.code.annotate
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - navigation.indexes
+    - search.suggest
+    - search.highlight
+    - toc.integrate
   icon:
     repo: fontawesome/brands/github
+
+extra_css:
+  - styles/extra.css
 
 nav:
   - Home: index.md
   - Usage: usage.md
-  - Translator: translator.md
-  - API Reference: api.md
+  - Cookbook: cookbook.md
+  - Translators: translator.md
+  - API: api.md
 
 plugins:
   - search
@@ -43,6 +61,10 @@ plugins:
 
 markdown_extensions:
   - attr_list
+  - admonition
+  - pymdownx.details
+  - pymdownx.tabbed:
+      alternate_style: true
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
@@ -50,3 +72,4 @@ markdown_extensions:
       anchor_linenums: true
   - pymdownx.inlinehilite
   - pymdownx.superfences
+  - footnotes

@@ -1,33 +1,22 @@
-# zspec
+# Composable specifications for Python
 
-Composable specification pattern for Python 3.14+.
+Turn business rules into objects. Combine them. Reuse everywhere.
 
-Define business rules as objects, then combine them with `&`, `|`, `^`, `~` to express complex logic.
+[Get Started](usage.md){ .md-button .md-button--primary }
+[Cookbook](cookbook.md){ .md-button }
 
-[Get Started :material-arrow-right:](usage.md){ .md-button }
-[GitHub :fontawesome-brands-github:](https://github.com/oek1ng/zspec){ .md-button }
+---
 
 ## The problem
 
-Business rules tend to spread across your codebase. A check like *"is this order eligible for free shipping?"* might live in a service method, duplicated in a view, slightly different in a validation layer. When requirements change, you hunt down every copy and hope you found them all.
+Business rules scatter across your codebase. A check like *"is this order eligible
+for free shipping?"* lives in a service, copied to a view, slightly different in
+validation. When requirements change, you hunt down every copy.
 
-The Specification pattern solves this by turning each rule into a single, testable object. Combine them with `&`, `|`, `^`, `~` to express complex logic without writing new classes.
+**zspec** turns each rule into a single, testable object. Combine them with
+`&`, `|`, `^`, `~` to express complex logic without writing new classes.
 
-## Why zspec?
-
-| | |
-|---|---|
-| **Composable** | Combine specs with `&`, `|`, `^`, `~` — build complex rules from simple ones without new classes. |
-| **Zero dependencies** | Standard library only. Optional extras for SQLAlchemy and Django. |
-| **Type-safe** | Generic `Specification[T]` preserves candidate types through composition. Full pyrefly strict mode support. |
-
-## Install
-
-```bash
-pip install zspec
-```
-
-## Five-minute example
+## Five minutes
 
 ```python
 from dataclasses import dataclass
@@ -60,10 +49,80 @@ order = Order(total=600, is_paid=True)
 assert free_shipping(order)
 ```
 
-## Operators at a glance
+## Why zspec?
 
-- `spec & other` — Both satisfied (AND)
-- `spec | other` — At least one satisfied (OR)
-- `spec ^ other` — Exactly one satisfied (XOR)
-- `~spec` — Negation (NOT)
-- `spec(candidate)` — Shorthand for `is_satisfied_by`
+<div class="grid cards" markdown>
+
+- :material-puzzle:{ .lg .middle } **Composable**
+
+    ---
+
+    `&` `|` `^` `~` — build complex rules from simple ones. No new classes needed.
+
+- :material-package-variant-closed:{ .lg .middle } **Zero dependencies**
+
+    ---
+
+    Standard library only. Optional extras for SQLAlchemy, Django, and Polars.
+
+- :material-shield-check:{ .lg .middle } **Type-safe**
+
+    ---
+
+    Generic `Specification[T]` preserves candidate types. Full pyrefly strict mode.
+
+- :material-database:{ .lg .middle } **Database translators**
+
+    ---
+
+    One spec → in-memory check, SQL, MongoDB, Django Q, or Polars expression.
+
+- :material-file-code:{ .lg .middle } **Serializable**
+
+    ---
+
+    Serialize rules to JSON. Store in configs, databases, or send over API.
+
+- :material-bug:{ .lg .middle } **Debuggable**
+
+    ---
+
+    `explain()` shows exactly which rules passed and failed — as an ASCII tree.
+
+</div>
+
+## Operators
+
+| Operator | Expression | Reads as |
+|---|---|---|
+| `&` | `a & b` | Both `a` AND `b` |
+| <code>&#124;</code> | <code>a &#124; b</code> | At least one |
+| `^` | `a ^ b` | Exactly one |
+| `~` | `~a` | NOT `a` |
+| `()` | `spec(c)` | `is_satisfied_by(c)` |
+
+## What else?
+
+```python
+# One spec — filter in memory AND query databases
+matches = list(eligible.filter(products))
+sql = MySql().translate(eligible)
+df.filter(MyPolars().translate(eligible))
+
+# Debug why a rule failed
+from zspec import explain
+print(explain(eligible, order))
+# AND FAIL
+# ├── Paid PASS
+# └── amount >= 500 FAIL
+
+# Build specs from config files
+from zspec import from_dict
+spec = from_dict(json.loads(config))
+
+# Quick field comparisons — no subclass needed
+spec = Specification[Product].matching(price__gte=100, in_stock=True)
+```
+
+[:fontawesome-solid-book: Full usage guide](usage.md){ .md-button }
+[:fontawesome-solid-kitchen-set: Cookbook](cookbook.md){ .md-button }

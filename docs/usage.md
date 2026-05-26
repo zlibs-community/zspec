@@ -1,8 +1,36 @@
 # Usage
 
+<div class="grid cards" markdown>
+
+- [:material-puzzle: **Composition**](#composition-operators)
+- [:material-factory: **Factories**](#quick-factory-specificationof)
+- [:material-filter: **Filtering**](#filtering-collections)
+- [:material-database: **Translators**](#translators)
+- [:material-bug: **Debugging**](#debugging-with-explain)
+- [:material-code-json: **Serialization**](#serialization-todict-fromdict)
+
+</div>
+
 ## Defining a specification
 
 Subclass `Specification[T]` and implement `is_satisfied_by`:
+
+**Without zspec** — inline checks, duplicated:
+
+```python
+if user.age >= 18 and user.email_verified:
+    ...
+```
+
+**With zspec** — one class, reusable everywhere:
+
+```python
+class Adult(Specification[User]):
+    def is_satisfied_by(self, user: User) -> bool:
+        return user.age >= 18
+```
+
+Full example:
 
 ```python
 from zspec import Specification
@@ -326,6 +354,19 @@ either_or = Admin() ^ Moderator()
 
 ## Filtering collections
 
+**Without zspec** — list comprehension, not reusable:
+
+```python
+results = [p for p in products if p.price >= 100 and p.in_stock]
+```
+
+**With zspec** — spec is a named, testable, reusable object:
+
+```python
+eligible = InStock() & MinPrice(100)
+results = list(eligible.filter(products))
+```
+
 Use `spec.filter(iterable)` for lazy, memory-efficient filtering:
 
 ```python
@@ -376,7 +417,7 @@ They fold away during composition so your spec trees stay clean:
 | Expression | Simplifies to |
 |------------|---------------|
 | `spec & true()` | `spec` |
-| `spec \| false()` | `spec` |
+| <code>spec &#124; false()</code> | `spec` |
 | `~true()` | `false()` |
 | `~~spec` | `spec` |
 
@@ -415,15 +456,13 @@ Use `explain(spec, candidate)` to see **why** a specification passed or failed:
 ```python
 from zspec import explain
 
-result = explain(Adult() & EmailVerified(), user)
-print(result.passed)   # False
-for child in result.children:
-    print(child.spec, child.passed)
-# Adult True
-# EmailVerified False
+print(explain(Adult() & EmailVerified(), user))
+# (Adult AND EmailVerified) FAIL
+# ├── Adult PASS
+# └── EmailVerified FAIL
 ```
 
-Returns an `ExplainNode` tree with `passed`, `spec`, and `children` fields.
+Returns an `ExplainNode` tree — printed, it renders with PASS / FAIL markers.
 
 ## Type safety
 

@@ -1,0 +1,52 @@
+:root {
+  --md-primary-fg-color: #5c6bc0;
+  --md-primary-fg-color--light: #7986cb;
+  --md-primary-fg-color--dark: #3f51b5;
+  --md-accent-fg-color: #009688;
+}
+
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: #7986cb;
+  --md-primary-fg-color--light: #9fa8da;
+  --md-primary-fg-color--dark: #5c6bc0;
+  --md-accent-fg-color: #80cbc4;
+}
+
+/* Hero section */
+.md-typeset h1 {
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--md-primary-fg-color) 0%, var(--md-accent-fg-color) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 3rem;
+}
+
+/* Feature cards */
+.md-typeset .grid.cards > :is(ul, ol) > li,
+.md-typeset .grid.cards > ul > li {
+  border-radius: 0.8rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.md-typeset .grid.cards > :is(ul, ol) > li:hover,
+.md-typeset .grid.cards > ul > li:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* Code blocks */
+.highlight {
+  border-radius: 0.6rem;
+}
+
+/* Buttons */
+.md-typeset .md-button {
+  border-radius: 2rem;
+  padding: 0.5em 1.5em;
+  font-weight: 600;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.md-typeset .md-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}

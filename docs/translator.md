@@ -184,6 +184,51 @@ translator = MyTranslator()
 # )
 ```
 
+### PolarsTranslator
+
+Generate native Polars expressions. Install with ``pip install zspec[polars]``:
+
+```python
+from dataclasses import dataclass
+import polars as pl
+from zspec import Specification
+from zspec.contrib.polars import PolarsTranslator
+
+
+@dataclass
+class Product:
+    price: int
+    in_stock: bool
+
+
+class InStock(Specification[Product]):
+    def is_satisfied_by(self, candidate: Product) -> bool:
+        return candidate.in_stock
+
+
+class MinPrice(Specification[Product]):
+    def __init__(self, min_price: int) -> None:
+        self.min_price = min_price
+
+    def is_satisfied_by(self, candidate: Product) -> bool:
+        return candidate.price >= self.min_price
+
+
+class MyTranslator(PolarsTranslator):
+    def _translate(self, spec: Specification[Product]) -> pl.Expr:
+        match spec:
+            case InStock():
+                return pl.col("in_stock")
+            case MinPrice(min_price=price):
+                return pl.col("price") >= price
+            case _:
+                return super()._translate(spec)
+
+translator = MyTranslator()
+df = pl.DataFrame({"price": [50, 200], "in_stock": [True, True]})
+result = df.filter(translator.translate(InStock() & MinPrice(100)))
+```
+
 ## Writing a custom translator
 
 Subclass `Translator[TResult]` and implement four methods:
