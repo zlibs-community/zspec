@@ -220,6 +220,24 @@ class Specification[T](ABC):
             return specs[0]
         return cast(Specification[T], cls.all_of(specs))
 
+    @classmethod
+    def excluding(
+        cls,
+        *predicates: Specification[T] | Callable[[T], bool],
+        **kwargs: object,
+    ) -> Specification[T]:
+        """Negated :meth:`matching` — exclude anything that matches.
+
+        ::
+
+            spec = Specification[Product].excluding(price__gte=100)
+            # equivalent to ~Specification[Product].matching(price__gte=100)
+        """
+        spec = cls.matching(*predicates, **kwargs)
+        if spec is cls.true():
+            return cls.true()
+        return ~spec
+
 
 class _TrueSpecification[T](Specification[T]):
     """Internal: specification that is always satisfied."""

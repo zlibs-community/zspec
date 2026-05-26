@@ -93,6 +93,23 @@ class TestMatchingPredicates:
         assert not spec(Product(price=50, in_stock=True))
 
 
+class TestExcluding:
+    def test_negates_matching(self) -> None:
+        spec = Specification[Product].excluding(price__gte=100)
+        assert not spec(Product(price=200, in_stock=False))
+        assert spec(Product(price=50, in_stock=False))
+
+    def test_with_field_proxy(self) -> None:
+        spec = Specification[Product].excluding(F.price >= 100)
+        assert not spec(Product(price=200, in_stock=False))
+        assert spec(Product(price=50, in_stock=False))
+
+    def test_empty_returns_true(self) -> None:
+        spec = Specification[Product].excluding()
+        assert spec is Specification.true()
+        assert spec(Product(price=0, in_stock=False))
+
+
 class TestFields:
     def test_gt(self) -> None:
         spec = F.price > 100
