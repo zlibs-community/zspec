@@ -2,6 +2,45 @@
 
 <!-- version list -->
 
+## v1.3.0 (2026-05-26)
+
+### Chores
+
+- Fix ci
+  ([`c7da054`](https://github.com/oek1ng/zspec/commit/c7da0543055a49024e2547889c4d09b08d308dbc))
+
+### Documentation
+
+- Improve docs
+  ([`a88ba3e`](https://github.com/oek1ng/zspec/commit/a88ba3eb261eb597d24f4fc5ece09a7838eeb495))
+
+- Spec.matching update
+  ([`8fb1d6e`](https://github.com/oek1ng/zspec/commit/8fb1d6e4fc9e13b2012d7a68ac7663575191bad8))
+
+### Features
+
+- Fields proxy
+  ([`d641573`](https://github.com/oek1ng/zspec/commit/d6415731a430db87fb133e151f0d31a2dfabbca6))
+
+- Improve explain
+  ([`f5e089d`](https://github.com/oek1ng/zspec/commit/f5e089d7db428490f0e89d25c2b6727d29ade1a6))
+
+- Polars translator, and to_ascii method
+  ([`1500e07`](https://github.com/oek1ng/zspec/commit/1500e07c193eae1c72bd9ed71ad06c8c21aa4b0d))
+
+- Serializing specs
+  ([`c27fb05`](https://github.com/oek1ng/zspec/commit/c27fb05dce200309425eccf8fdf1c8adb70943e1))
+
+- Spec.count
+  ([`5266495`](https://github.com/oek1ng/zspec/commit/5266495127e60761dbe3a12dbd0eae818cc92cb1))
+
+- Spec.excluding sugar on ~spec.matching
+  ([`96db13a`](https://github.com/oek1ng/zspec/commit/96db13ab53ee4d30920301bb82eeea36384d9f8b))
+
+- Spec.matching
+  ([`bf7abf4`](https://github.com/oek1ng/zspec/commit/bf7abf4075e400f1edc5c6ebbb4b017e27d8761b))
+
+
 ## v1.2.1 (2026-05-26)
 
 ### Bug Fixes
