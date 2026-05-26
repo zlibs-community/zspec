@@ -162,3 +162,13 @@ class TestTrueFalse:
     def test_true_xor_false(self) -> None:
         spec = Specification[object].true() ^ Specification[object].false()
         assert spec(None)
+
+
+class TestCount:
+    def test_empty(self) -> None:
+        even = Specification[int].of(lambda x: x % 2 == 0)
+        assert even.count([]) == 0
+
+    def test_counts_matches(self) -> None:
+        even = Specification[int].of(lambda x: x % 2 == 0)
+        assert even.count([1, 2, 3, 4, 5]) == 2

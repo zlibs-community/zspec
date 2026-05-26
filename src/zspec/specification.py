@@ -105,6 +105,10 @@ class Specification[T](ABC):
         """Yield candidates that do **not** satisfy this specification."""
         return (c for c in candidates if not self(c))
 
+    def count(self, candidates: Iterable[T]) -> int:
+        """Count how many candidates satisfy this specification."""
+        return sum(1 for c in candidates if self(c))
+
     def partition(
         self,
         candidates: Iterable[T],
