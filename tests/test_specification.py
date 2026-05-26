@@ -239,6 +239,75 @@ class TestEquality:
         assert d[Always()] == "yes"
 
 
+class TestSimplify:
+    def test_and_with_false_is_false(self) -> None:
+        result = Always() & Specification.false()
+        assert result is Specification.false()
+
+    def test_false_and_spec_is_false(self) -> None:
+        result = Specification.false() & Always()
+        assert result is Specification.false()
+
+    def test_and_with_true_is_spec(self) -> None:
+        result = Always() & Specification.true()
+        assert result == Always()
+
+    def test_true_and_spec_is_spec(self) -> None:
+        result = Specification.true() & Always()
+        assert result == Always()
+
+    def test_or_with_true_is_true(self) -> None:
+        result = Always() | Specification.true()
+        assert result is Specification.true()
+
+    def test_true_or_spec_is_true(self) -> None:
+        result = Specification.true() | Never()
+        assert result is Specification.true()
+
+    def test_or_with_false_is_spec(self) -> None:
+        result = Always() | Specification.false()
+        assert result == Always()
+
+    def test_false_or_spec_is_spec(self) -> None:
+        result = Specification.false() | Always()
+        assert result == Always()
+
+    def test_xor_with_true_is_not(self) -> None:
+        result = Always() ^ Specification.true()
+        assert result == ~Always()
+
+    def test_true_xor_spec_is_not(self) -> None:
+        result = Specification.true() ^ Always()
+        assert result == ~Always()
+
+    def test_xor_with_false_is_spec(self) -> None:
+        result = Always() ^ Specification.false()
+        assert result == Always()
+
+    def test_false_xor_spec_is_spec(self) -> None:
+        result = Specification.false() ^ Always()
+        assert result == Always()
+
+    def test_double_negation(self) -> None:
+        spec = Always()
+        assert ~~spec is spec
+
+    def test_not_true_is_false(self) -> None:
+        assert ~Specification.true() is Specification.false()
+
+    def test_not_false_is_true(self) -> None:
+        assert ~Specification.false() is Specification.true()
+
+    def test_deep_nested_simplifies(self) -> None:
+        """True & (False | (spec & True)) simplifies to spec."""
+        spec = Always() & Specification.false()
+        assert spec is Specification.false()
+
+    def test_true_and_false_is_false(self) -> None:
+        result = Specification.true() & Specification.false()
+        assert result is Specification.false()
+
+
 class TestTypeSafety:
     def test_generic_preserves_type(self) -> None:
         spec: Specification[int] = GreaterThan(10) & GreaterThan(20)

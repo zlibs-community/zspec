@@ -138,7 +138,7 @@ class TestPartition:
 class TestTrueFalse:
     def test_true(self) -> None:
         assert Specification.true()(None)
-        assert str(Specification.true()) == "Of(<lambda>)"
+        assert str(Specification.true()) == "TRUE"
 
     def test_false(self) -> None:
         assert not Specification.false()(None)

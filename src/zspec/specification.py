@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Callable, Iterable, Iterator
 from functools import reduce
 from operator import and_, or_
-from typing import cast, override
+from typing import Any, Final, cast, override
 
 from zspec.utils import slots_of
 
@@ -19,19 +19,43 @@ class Specification[T](ABC):
         """Check whether *candidate* satisfies this specification."""
         raise NotImplementedError
 
-    def __and__(self, other: Specification[T]) -> AndSpecification[T]:
+    def __and__(self, other: Specification[T]) -> Specification[T]:
         """Combine with *other* via logical AND."""
+        if isinstance(self, _FalseSpecification):
+            return cast(Specification[T], _FALSE_SPEC)
+        if isinstance(other, _FalseSpecification):
+            return cast(Specification[T], _FALSE_SPEC)
+        if isinstance(self, _TrueSpecification):
+            return other
+        if isinstance(other, _TrueSpecification):
+            return self
         return AndSpecification(left=self, right=other)
 
-    def __or__(self, other: Specification[T]) -> OrSpecification[T]:
+    def __or__(self, other: Specification[T]) -> Specification[T]:
         """Combine with *other* via logical OR."""
+        if isinstance(self, _TrueSpecification):
+            return cast(Specification[T], _TRUE_SPEC)
+        if isinstance(other, _TrueSpecification):
+            return cast(Specification[T], _TRUE_SPEC)
+        if isinstance(self, _FalseSpecification):
+            return other
+        if isinstance(other, _FalseSpecification):
+            return self
         return OrSpecification(self, other)
 
-    def __xor__(self, other: Specification[T]) -> XorSpecification[T]:
+    def __xor__(self, other: Specification[T]) -> Specification[T]:
         """Combine with *other* via logical XOR."""
+        if isinstance(self, _TrueSpecification):
+            return ~other
+        if isinstance(other, _TrueSpecification):
+            return ~self
+        if isinstance(self, _FalseSpecification):
+            return other
+        if isinstance(other, _FalseSpecification):
+            return self
         return XorSpecification(self, other)
 
-    def __invert__(self) -> NotSpecification[T]:
+    def __invert__(self) -> Specification[T]:
         """Negate this specification."""
         return NotSpecification(self)
 
@@ -75,7 +99,8 @@ class Specification[T](ABC):
         return (c for c in candidates if not self(c))
 
     def partition(
-        self, candidates: Iterable[T],
+        self,
+        candidates: Iterable[T],
     ) -> tuple[list[T], list[T]]:
         """Split into ``(passed, failed)`` lists."""
         passed: list[T] = []
@@ -109,12 +134,12 @@ class Specification[T](ABC):
     @classmethod
     def true(cls) -> Specification[T]:
         """Return a specification satisfied by **any** candidate."""
-        return cls.of(lambda _: True)
+        return cast(Specification[T], _TRUE_SPEC)
 
     @classmethod
     def false(cls) -> Specification[T]:
         """Return a specification satisfied by **no** candidate."""
-        return cls.of(lambda _: False)
+        return cast(Specification[T], _FALSE_SPEC)
 
     @classmethod
     def all_of(
@@ -145,6 +170,46 @@ class Specification[T](ABC):
         if not items:
             return default
         return reduce(or_, items)
+
+
+class _TrueSpecification[T](Specification[T]):
+    """Internal: specification that is always satisfied."""
+
+    __slots__ = ()
+
+    @override
+    def is_satisfied_by(self, candidate: T) -> bool:
+        return True
+
+    @override
+    def __invert__(self) -> Specification[T]:
+        return cast(Specification[T], _FALSE_SPEC)
+
+    @override
+    def __str__(self) -> str:
+        return "TRUE"
+
+
+class _FalseSpecification[T](Specification[T]):
+    """Internal: specification that is never satisfied."""
+
+    __slots__ = ()
+
+    @override
+    def is_satisfied_by(self, candidate: T) -> bool:
+        return False
+
+    @override
+    def __invert__(self) -> Specification[T]:
+        return cast(Specification[T], _TRUE_SPEC)
+
+    @override
+    def __str__(self) -> str:
+        return "FALSE"
+
+
+_TRUE_SPEC: Final[_TrueSpecification[Any]] = _TrueSpecification()
+_FALSE_SPEC: Final[_FalseSpecification[Any]] = _FalseSpecification()
 
 
 class AndSpecification[T](Specification[T]):
@@ -205,6 +270,11 @@ class NotSpecification[T](Specification[T]):
     def is_satisfied_by(self, candidate: T) -> bool:
         """Check whether *candidate* does **not** satisfy the specification."""
         return not self.spec.is_satisfied_by(candidate)
+
+    @override
+    def __invert__(self) -> Specification[T]:
+        """Negate — double negation returns the inner spec."""
+        return self.spec
 
     @override
     def __str__(self) -> str:
