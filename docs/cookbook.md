@@ -93,19 +93,27 @@ def ship(order: Order) -> None:
 
 ## Translate to database queries
 
-One spec — filter in memory AND in the database:
+One spec — filter in memory AND in the database. Translators produce
+filter fragments, you control joins and projections:
 
 ```python
 # In-memory
 eligible.is_satisfied_by(product)
 
-# Same spec → SQL
-sql = SqlTranslator().translate(eligible)  # WHERE price >= %s AND in_stock
+# Same spec → SQL WHERE clause
+fragment = SqlTranslator().translate(eligible)
+cursor.execute(
+    f"SELECT * FROM products WHERE {fragment.sql}",
+    fragment.params,
+)
 
-# Same spec → MongoDB
-mongo = MongoTranslator().translate(eligible)  # {$and: [{price: {$gte: 100}}, {in_stock: true}]}
+# Same spec → MongoDB $match
+collection.find(MongoTranslator().translate(eligible))
 
-# Same spec → Polars / Pandas DataFrames
+# Same spec → Django Q
+Product.objects.filter(DjangoQTranslator().translate(eligible))
+
+# Same spec → Polars / Pandas filter
 df.filter(PolarsTranslator().translate(eligible))
 df.query(PandasTranslator().translate(eligible))
 ```

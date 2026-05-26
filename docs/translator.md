@@ -274,6 +274,78 @@ df = pd.DataFrame({"price": [50, 200], "in_stock": [True, True]})
 result = df.query(translator.translate(InStock() & MinPrice(100)))
 ```
 
+## Using translators with real queries
+
+Translators produce **filter fragments** — not full queries. Joins, projections,
+and ordering stay in your control.
+
+### SQL with JOIN
+
+```python
+fragment = MySql().translate(InStock() & Category("Books"))
+
+query = f"""
+    SELECT p.*
+    FROM products p
+    JOIN categories c ON p.category_id = c.id
+    WHERE {fragment.sql}
+"""
+cursor.execute(query, fragment.params)
+```
+
+### MongoDB with `$lookup`
+
+```python
+filter_doc = MyMongo().translate(InStock() & Category("Books"))
+
+pipeline = [
+    {"$lookup": {
+        "from": "categories",
+        "localField": "category_id",
+        "foreignField": "_id",
+        "as": "category",
+    }},
+    {"$unwind": "$category"},
+    {"$match": filter_doc},
+]
+collection.aggregate(pipeline)
+```
+
+### Django ORM with `select_related`
+
+```python
+q = MyDjango().translate(InStock() & Category("Books"))
+
+Product.objects.select_related("category").filter(q)
+```
+
+### SQLAlchemy with `.join()`
+
+```python
+expr = MySA().translate(InStock() & Category("Books"))
+
+stmt = select(Product).join(Category).where(expr)
+session.execute(stmt)
+```
+
+### Pandas with pre-joined DataFrame
+
+```python
+query_str = MyPandas().translate(InStock() & Category("Books"))
+
+df = pd.merge(products_df, categories_df, on="category_id")
+result = df.query(query_str)
+```
+
+### Polars with pre-joined DataFrame
+
+```python
+expr = MyPolars().translate(InStock() & Category("Books"))
+
+df = products_df.join(categories_df, on="category_id")
+result = df.filter(expr)
+```
+
 ## Writing a custom translator
 
 Subclass `Translator[TResult]` and implement four methods:
