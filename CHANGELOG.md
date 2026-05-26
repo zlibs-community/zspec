@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.2.1 (2026-05-26)
+
+### Bug Fixes
+
+- NotImplemented on, or and xor in spec
+  ([`51f7243`](https://github.com/oek1ng/zspec/commit/51f72433ee48194e9c6060a63419baab941f4eec))
+
+
 ## v1.2.0 (2026-05-26)
 
 ### Chores
