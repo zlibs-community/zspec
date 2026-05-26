@@ -5,7 +5,7 @@
 ```bash
 git clone https://github.com/oek1ng/zspec.git
 cd zspec
-uv sync --extra django --extra sqlalchemy --extra docs
+uv sync --all-groups --all-extras
 pre-commit install
 ```
 
