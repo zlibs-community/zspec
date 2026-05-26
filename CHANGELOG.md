@@ -2,6 +2,30 @@
 
 <!-- version list -->
 
+## v1.4.0 (2026-05-26)
+
+### Chores
+
+- Ai-friendly
+  ([`d277a39`](https://github.com/oek1ng/zspec/commit/d277a39969aa1522e532fcac26d58079b1955e2e))
+
+- Fix mkdocs conf
+  ([`75457a2`](https://github.com/oek1ng/zspec/commit/75457a22beaaad310ce59d312302f64ce7a0bf39))
+
+### Documentation
+
+- Improve style
+  ([`5e108b8`](https://github.com/oek1ng/zspec/commit/5e108b8c12875cc4740bc2c0e7c3fd5586eae11a))
+
+- Update README.md
+  ([`886120d`](https://github.com/oek1ng/zspec/commit/886120ddca71591283626901b4271d434099b2b0))
+
+### Features
+
+- Variadic all_of / any_of
+  ([`cc5339c`](https://github.com/oek1ng/zspec/commit/cc5339c739d87e22fbdcba1983b560268bdcf74d))
+
+
 ## v1.3.0 (2026-05-26)
 
 ### Chores
