@@ -2,6 +2,30 @@
 
 <!-- version list -->
 
+## v1.2.0 (2026-05-26)
+
+### Chores
+
+- Fix ci
+  ([`545fe41`](https://github.com/oek1ng/zspec/commit/545fe418fa8150bf42b7d78455402e27f671b712))
+
+- Optimization
+  ([`be9a2fb`](https://github.com/oek1ng/zspec/commit/be9a2fb6bf46f8e14200c1629fd17e236720a226))
+
+- Xor optimization for django and mongo translators
+  ([`42153e5`](https://github.com/oek1ng/zspec/commit/42153e5f3c4842bac6d4e59a93bf5962e3e37dde))
+
+### Documentation
+
+- Update
+  ([`f4482e5`](https://github.com/oek1ng/zspec/commit/f4482e5964bce18e3351ff210945c274f6916e0a))
+
+### Features
+
+- Eq and hash spec
+  ([`38fea9b`](https://github.com/oek1ng/zspec/commit/38fea9b5af755aa71c27642b1075d824acab76a9))
+
+
 ## v1.1.1 (2026-05-25)
 
 ### Bug Fixes
