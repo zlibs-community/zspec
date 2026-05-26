@@ -1,5 +1,7 @@
 """Specification pattern — composable business rule objects."""
 
+from __future__ import annotations
+
 import operator
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Iterable, Iterator

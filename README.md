@@ -6,7 +6,7 @@
 [![Docs](https://readthedocs.org/projects/zspec/badge/)](https://zspec.readthedocs.io)
 [![License](https://img.shields.io/pypi/l/zspec)](https://github.com/oek1ng/zspec/blob/main/LICENSE)
 
-Composable specification pattern for Python 3.14+.
+Composable specification pattern for Python 3.12+.
 
 [Documentation](https://zspec.readthedocs.io) · [PyPI](https://pypi.org/project/zspec/) · [GitHub](https://github.com/oek1ng/zspec)
 

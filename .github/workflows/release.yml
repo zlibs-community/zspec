@@ -20,7 +20,7 @@ jobs:
           fetch-depth: 0
       - uses: astral-sh/setup-uv@v5.4.2
         with:
-          python-version: "3.14"
+          python-version: "3.12"
       - run: uv sync --all-extras
       - run: uv run semantic-release version
         env:
