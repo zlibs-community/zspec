@@ -15,5 +15,14 @@ wheels/
 # Documentation
 site/
 
+# Test artifacts
+.coverage
+htmlcov/
+
 # IDE-generated
 .vscode
+
+# Tools-generated
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
