@@ -139,11 +139,11 @@ The lambda name is preserved in `repr()`.
 
 ## Attribute factory: `Specification.matching()`
 
-Generate a specification directly from attribute comparisons — no subclass needed:
+Generate a specification directly from field comparisons and predicates:
 
 ```python
 from dataclasses import dataclass
-from zspec import Specification
+from zspec import Specification, fields
 
 
 @dataclass
@@ -152,12 +152,50 @@ class Product:
     in_stock: bool
 
 
+F = fields(Product)
+
+# Field proxies with comparison operators
+spec = Specification[Product].matching(
+    F.price >= 100,
+    F.in_stock == True,
+)
+
+# Keyword arguments with operator suffixes
 spec = Specification[Product].matching(price__gte=100, in_stock=True)
-spec(Product(price=100, in_stock=True))   # True
-spec(Product(price=50, in_stock=True))    # False
+
+# Lambda predicates
+spec = Specification[Product].matching(
+    lambda p: p.price > 100,
+    lambda p: p.in_stock,
+)
+
+# Mix and match
+spec = Specification[Product].matching(
+    F.price >= 100,
+    lambda p: p.in_stock,
+    in_stock=True,
+)
 ```
 
-### Operator suffixes
+### Field proxies via `fields()`
+
+`fields(Model)` returns a namespace where each attribute access produces a
+proxy that overloads comparison operators:
+
+```python
+F = fields(Product)
+F.price >= 100         # Specification[Product]
+F.price != 200         # Specification[Product]
+F.in_stock == True     # Specification[Product]
+```
+
+These are composable directly:
+
+```python
+spec = (F.price >= 100) & (F.in_stock == True)
+```
+
+### Keyword operator suffixes
 
 Append `__op` to the field name. A bare field name defaults to `eq`:
 
@@ -177,8 +215,7 @@ Append `__op` to the field name. A bare field name defaults to `eq`:
 
 ```python
 cheap = Specification[Product].matching(price__lt=50)
-available = Specification[Product].matching(in_stock=True)
-bargain = cheap & available
+bargain = cheap & F.in_stock
 ```
 
 ## XOR (`^`)
