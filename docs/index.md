@@ -51,45 +51,14 @@ assert free_shipping(order)
 
 ## Why zspec?
 
-<div class="grid cards" markdown>
-
-- :material-puzzle:{ .lg .middle } **Composable**
-
-    ---
-
-    `&` `|` `^` `~` — build complex rules from simple ones. No new classes needed.
-
-- :material-package-variant-closed:{ .lg .middle } **Zero dependencies**
-
-    ---
-
-    Standard library only. Optional extras for SQLAlchemy, Django, and Polars.
-
-- :material-shield-check:{ .lg .middle } **Type-safe**
-
-    ---
-
-    Generic `Specification[T]` preserves candidate types. Full pyrefly strict mode.
-
-- :material-database:{ .lg .middle } **Database translators**
-
-    ---
-
-    One spec → in-memory check, SQL, MongoDB, Django Q, or Polars expression.
-
-- :material-file-code:{ .lg .middle } **Serializable**
-
-    ---
-
-    Serialize rules to JSON. Store in configs, databases, or send over API.
-
-- :material-bug:{ .lg .middle } **Debuggable**
-
-    ---
-
-    `explain()` shows exactly which rules passed and failed — as an ASCII tree.
-
-</div>
+| | |
+|---|---|
+| :material-puzzle: **Composable** | `&` `\|` `^` `~` — build complex rules from simple ones. No new classes needed. |
+| :material-package-variant-closed: **Zero dependencies** | Standard library only. Optional extras for SQLAlchemy, Django, and Polars. |
+| :material-shield-check: **Type-safe** | Generic `Specification[T]` preserves candidate types. Full pyrefly strict mode. |
+| :material-database: **Database translators** | One spec → in-memory check, SQL, MongoDB, Django Q, or Polars expression. |
+| :material-file-code: **Serializable** | Serialize rules to JSON. Store in configs, databases, or send over API. |
+| :material-bug: **Debuggable** | `explain()` shows which rules passed and failed — as an ASCII tree. |
 
 ## Operators
 

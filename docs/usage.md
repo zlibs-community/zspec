@@ -1,15 +1,11 @@
 # Usage
 
-<div class="grid cards" markdown>
-
-- [:material-puzzle: **Composition**](#composition-operators)
-- [:material-factory: **Factories**](#quick-factory-specificationof)
-- [:material-filter: **Filtering**](#filtering-collections)
-- [:material-database: **Translators**](#translators)
-- [:material-bug: **Debugging**](#debugging-with-explain)
-- [:material-code-json: **Serialization**](#serialization-todict-fromdict)
-
-</div>
+**Quick nav:** [Composition](#composition-operators) ·
+[Factories](#quick-factory-specificationof) ·
+[Filtering](#filtering-collections) ·
+[Translators](#translators) ·
+[Debugging](#debugging-with-explain) ·
+[Serialization](#serialization-todict-fromdict)
 
 ## Defining a specification
 
