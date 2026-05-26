@@ -3,6 +3,7 @@
 [![PyPI](https://img.shields.io/pypi/v/zspec)](https://pypi.org/project/zspec/)
 [![Python](https://img.shields.io/pypi/pyversions/zspec)](https://pypi.org/project/zspec/)
 [![CI](https://github.com/oek1ng/zspec/actions/workflows/ci.yml/badge.svg)](https://github.com/oek1ng/zspec/actions/workflows/ci.yml)
+[![Docs](https://readthedocs.org/projects/zspec/badge/)](https://zspec.readthedocs.io)
 [![License](https://img.shields.io/pypi/l/zspec)](https://github.com/oek1ng/zspec/blob/main/LICENSE)
 
 Composable specification pattern for Python 3.14+.
