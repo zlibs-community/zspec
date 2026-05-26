@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.5.0 (2026-05-26)
+
+### Features
+
+- Pandas translator
+  ([`1aaf6af`](https://github.com/oek1ng/zspec/commit/1aaf6af2a1e4963ee4a0390f509a21d216b5ae66))
+
+
 ## v1.4.0 (2026-05-26)
 
 ### Chores
