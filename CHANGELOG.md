@@ -2,6 +2,30 @@
 
 <!-- version list -->
 
+## v1.6.0 (2026-05-26)
+
+### Chores
+
+- Remove coverage
+  ([`b9512d1`](https://github.com/oek1ng/zspec/commit/b9512d120bd925de57b55af24a1a27bd866800c4))
+
+### Documentation
+
+- Add pandas support
+  ([`f21f1e7`](https://github.com/oek1ng/zspec/commit/f21f1e78b676f64fe3a53bcad154ca07747a299a))
+
+- Readthedocs badge
+  ([`e8bf300`](https://github.com/oek1ng/zspec/commit/e8bf300b4f8f0f65f90a2f19a0cb65e56fe418ed))
+
+- Update README.md
+  ([`6f412fb`](https://github.com/oek1ng/zspec/commit/6f412fbe8420fc294de2ea97ca064574d628f41c))
+
+### Features
+
+- Python3.12+ support
+  ([`43dec08`](https://github.com/oek1ng/zspec/commit/43dec0894d239cdc4751311716c674f3c6e379e8))
+
+
 ## v1.5.0 (2026-05-26)
 
 ### Features
