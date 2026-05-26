@@ -3,6 +3,7 @@
 lint:
 	uv run ruff check .
 	uv run pyrefly check .
+	uv run mypy src tests
 
 test:
 	uv run pytest -q

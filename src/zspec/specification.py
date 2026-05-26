@@ -179,18 +179,34 @@ class Specification[T](ABC):
         return reduce(or_, items)
 
     @classmethod
-    def matching(cls, **kwargs: object) -> Specification[T]:
-        """Create a specification from attribute comparisons.
+    def matching(
+        cls,
+        *predicates: Specification[T] | Callable[[T], bool],
+        **kwargs: object,
+    ) -> Specification[T]:
+        """Create a specification from field comparisons and/or predicates.
 
-        Each key may use ``field__op`` syntax::
+        Positional args accept lambdas or field proxies from :func:`fields`::
+
+            F = fields(Product)
+            spec = Specification[Product].matching(
+                F.price >= 100,
+                lambda p: p.in_stock,
+            )
+
+        Keyword args use ``field__op`` syntax::
 
             spec = Specification[Product].matching(price__gte=100, in_stock=True)
-            spec(product)  # product.price >= 100 and product.in_stock
 
-        Supported operators: ``eq``, ``ne``, ``gt``, ``gte``, ``lt``, ``lte``.
+        Supported keyword operators: ``eq``, ``ne``, ``gt``, ``gte``, ``lt``, ``lte``.
         A plain field name without ``__op`` defaults to ``eq``.
         """
         specs: list[Specification[T]] = []
+        for p in predicates:
+            if isinstance(p, Specification):
+                specs.append(p)
+            else:
+                specs.append(cls.of(p))
         for key, value in kwargs.items():
             field, found, op = key.rpartition("__")
             if not found:
@@ -372,3 +388,55 @@ class _FieldSpec[T](Specification[T]):
     def __str__(self) -> str:
         symbol = _OPERATOR_SYMBOLS.get(self.op, self.op)
         return f"{self.field} {symbol} {self.value!r}"
+
+
+class _FieldProxy[T]:
+    """Internal: overloads comparison operators to build ``_FieldSpec``."""
+
+    __slots__ = ("_field",)
+    __hash__: None = None  # type: ignore[assignment]  # unhashable
+
+    def __init__(self, field: str) -> None:
+        self._field = field
+
+    def __gt__(self, value: object) -> Specification[T]:
+        return cast(Specification[T], _FieldSpec(self._field, "gt", value))
+
+    def __ge__(self, value: object) -> Specification[T]:
+        return cast(Specification[T], _FieldSpec(self._field, "gte", value))
+
+    def __lt__(self, value: object) -> Specification[T]:
+        return cast(Specification[T], _FieldSpec(self._field, "lt", value))
+
+    def __le__(self, value: object) -> Specification[T]:
+        return cast(Specification[T], _FieldSpec(self._field, "lte", value))
+
+    def __eq__(self, value: object) -> Specification[T]:  # type: ignore[override]
+        if not isinstance(value, _FieldProxy):
+            return cast(Specification[T], _FieldSpec(self._field, "eq", value))
+        return NotImplemented
+
+    def __ne__(self, value: object) -> Specification[T]:  # type: ignore[override]
+        if not isinstance(value, _FieldProxy):
+            return cast(Specification[T], _FieldSpec(self._field, "ne", value))
+        return NotImplemented
+
+
+class _FieldNamespace[T]:
+    """Internal: namespace of field proxies."""
+
+    __slots__: tuple[str, ...] = ()
+
+    def __getattr__(self, name: str) -> _FieldProxy[T]:
+        return _FieldProxy(name)
+
+
+def fields[Model](_model: type[Model]) -> _FieldNamespace[Model]:
+    """Return a namespace for building field-comparison specifications.
+
+    Usage::
+
+        F = fields(Product)
+        spec = F.price >= 100  # Specification[Product]
+    """
+    return cast(_FieldNamespace[Model], _FieldNamespace())

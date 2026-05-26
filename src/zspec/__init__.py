@@ -21,6 +21,9 @@ from zspec.specification import (
 from zspec.specification import (
     XorSpecification as XorSpecification,
 )
+from zspec.specification import (
+    fields as fields,
+)
 from zspec.translator import (
     Translator as Translator,
 )
