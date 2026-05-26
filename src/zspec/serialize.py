@@ -48,6 +48,11 @@ def to_dict(spec: Specification[Any]) -> dict[str, object]:
     Composite nodes are recursively serialized.  Leaf specifications
     keep their class name and all slot values.
 
+    Usage::
+
+        data = to_dict(InStock() & MinPrice(100))
+        # {"type": "AndSpecification", "left": {...}, "right": {...}}
+
     ``Specification.of()`` specs and unregistered user-defined types
     will raise :exc:`TypeError`.
     """
@@ -107,6 +112,10 @@ def from_dict(
     *registry* maps class names to ``Specification`` subclasses.
     Built-in types (composites, ``TRUE``, ``FALSE``, ``FieldSpec``)
     are always recognized.
+
+    Usage::
+
+        spec = from_dict({"type": "MinPrice", "threshold": 100})
     """
     reg: dict[str, type[Specification[Any]]] = {**_BUILTINS}
     reg.update(_auto_registry)
