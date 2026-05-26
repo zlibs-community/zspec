@@ -8,6 +8,8 @@
 
 Composable specification pattern for Python 3.14+.
 
+[Documentation](https://zspec.readthedocs.io) · [PyPI](https://pypi.org/project/zspec/) · [GitHub](https://github.com/oek1ng/zspec)
+
 ## Install
 
 ```bash
