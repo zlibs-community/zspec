@@ -83,6 +83,23 @@ class TestExplain:
         assert node.children == []
 
 
+class TestExplainStr:
+    def test_leaf_pass(self) -> None:
+        result = explain(Always(), None)
+        assert str(result) == "Always PASS"
+
+    def test_leaf_fail(self) -> None:
+        result = explain(Never(), None)
+        assert str(result) == "Never FAIL"
+
+    def test_and_mixed(self) -> None:
+        result = explain(Always() & Never(), None)
+        lines = str(result).split("\n")
+        assert "(Always AND Never) FAIL" in lines[0]
+        assert "Always PASS" in lines[1]
+        assert "Never FAIL" in lines[2]
+
+
 class TestToAscii:
     def test_leaf(self) -> None:
         result = to_ascii(Always())

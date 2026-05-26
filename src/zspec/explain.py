@@ -1,7 +1,8 @@
 """Explain and visualize specification trees."""
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, override
 
 from zspec.specification import (
     AndSpecification,
@@ -14,11 +15,29 @@ from zspec.specification import (
 
 @dataclass
 class ExplainNode:
-    """Result of a specification check on a candidate."""
+    """Result of a specification check on a candidate.
+
+    The ``__str__`` renders a tree with PASS / FAIL markers::
+
+        AND FAIL
+        ├── InStock PASS
+        └── price >= 100 FAIL
+    """
 
     passed: bool
     spec: str
     children: list[ExplainNode] = field(default_factory=list)
+
+    @override
+    def __str__(self) -> str:
+        """Return an ASCII tree with PASS / FAIL for each node."""
+        return "\n".join(
+            _render_tree(
+                self,
+                label=lambda n: f"{n.spec} {'PASS' if n.passed else 'FAIL'}",
+                children=lambda n: n.children,
+            ),
+        )
 
 
 def explain(spec: Specification[Any], candidate: object) -> ExplainNode:
@@ -30,11 +49,10 @@ def explain(spec: Specification[Any], candidate: object) -> ExplainNode:
 
     Usage::
 
-        result = explain(adult & verified, user)
-        print(result.passed)
-        for child in result.children:
-            print(child.spec, child.passed)
-
+        print(explain(eligible, product))
+        # AND FAIL
+        # ├── InStock PASS
+        # └── price >= 100 FAIL
     """
     match spec:
         case AndSpecification(left=left, right=right):
@@ -85,15 +103,23 @@ def to_ascii(spec: Specification[Any]) -> str:
         # ├── price >= 100
         # └── in_stock == True
     """
-    return "\n".join(_ascii_lines(spec))
+    return "\n".join(
+        _render_tree(spec, label=str, children=_spec_children),
+    )
 
 
-def _ascii_lines(spec: Specification[Any]) -> list[str]:
-    lines = [str(spec)]
-    children = list(_spec_children(spec))
-    for i, child in enumerate(children):
-        is_last = i == len(children) - 1
-        child_lines = _ascii_lines(child)
+def _render_tree[T](
+    root: T,
+    *,
+    label: Callable[[T], str],
+    children: Callable[[T], list[T]],
+) -> list[str]:
+    """Render *root* as an ASCII tree, one string per line."""
+    lines = [label(root)]
+    kids = children(root)
+    for i, child in enumerate(kids):
+        is_last = i == len(kids) - 1
+        child_lines = _render_tree(child, label=label, children=children)
         connector = "└── " if is_last else "├── "
         continuation = "    " if is_last else "│   "
         lines.append(connector + child_lines[0])
