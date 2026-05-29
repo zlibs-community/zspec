@@ -1,5 +1,8 @@
 """zspec — a specification pattern library for Python."""
 
+from zspec.cache import (
+    CachingSpecification as CachingSpecification,
+)
 from zspec.explain import (
     ExplainNode as ExplainNode,
 )

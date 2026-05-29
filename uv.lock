@@ -1658,7 +1658,7 @@ wheels = [
 
 [[package]]
 name = "zspec"
-version = "1.5.0"
+version = "1.7.0"
 source = { editable = "." }
 
 [package.optional-dependencies]
