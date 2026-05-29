@@ -2,6 +2,45 @@
 
 <!-- version list -->
 
+## v1.8.0 (2026-05-29)
+
+### Chores
+
+- Supported python versions badges
+  ([`bd32762`](https://github.com/zlibs-community/zspec/commit/bd32762e1b41658a7ba6d9509d0922075af66b3c))
+
+### Documentation
+
+- Claude doc
+  ([`7e221d9`](https://github.com/zlibs-community/zspec/commit/7e221d9baef528bdcec90e94d15297b745a14256))
+
+- Joins
+  ([`66062a5`](https://github.com/zlibs-community/zspec/commit/66062a5e15a33826a120bb4bd8885acddd81acf7))
+
+- Update CONTRIBUTING.md
+  ([`23033a4`](https://github.com/zlibs-community/zspec/commit/23033a45dee643183b6ef24708dbdaff247aeb8d))
+
+- Updated docs
+  ([`7c81e3e`](https://github.com/zlibs-community/zspec/commit/7c81e3ef636a66e29674b72b1e308529bf94c9fa))
+
+### Features
+
+- Cache
+  ([`4ca1040`](https://github.com/zlibs-community/zspec/commit/4ca1040f9b85a5d4918cb95f330f1bedca5e5a3c))
+
+- Elasticsearch translator
+  ([`1035987`](https://github.com/zlibs-community/zspec/commit/1035987663dd315a12316cf6b8ad6328eb8c4868))
+
+- Logging translator
+  ([`2e307e4`](https://github.com/zlibs-community/zspec/commit/2e307e49d1abda2b5f5a614f6a0a3f1b9878cfcd))
+
+- Pydantic integration
+  ([`87e9151`](https://github.com/zlibs-community/zspec/commit/87e91517c63a86f152756e0ea670c13e0c06adcf))
+
+- Redisearch translator
+  ([`9aa4a89`](https://github.com/zlibs-community/zspec/commit/9aa4a896dcd4758ea3a488e3bac1e340fed026fe))
+
+
 ## v1.7.0 (2026-05-26)
 
 ### Features
