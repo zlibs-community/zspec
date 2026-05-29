@@ -125,4 +125,5 @@ src/zspec/
     sqlalchemy.py    # SqlAlchemyTranslator
     polars.py        # PolarsTranslator
     pandas.py        # PandasTranslator
+    logging.py       # LoggingTranslator — log each translation step
 ```
