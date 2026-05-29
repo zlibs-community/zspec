@@ -103,6 +103,20 @@ Subclass and override `_translate`. Each translator has `_and`, `_or`, `_not`, `
 | `SqlAlchemyTranslator` | `ColumnElement[bool]` | `zspec[sqlalchemy]` |
 | `PolarsTranslator` | `pl.Expr` | `zspec[polars]` |
 | `PandasTranslator` | `str` | `zspec[pandas]` |
+| `ElasticsearchTranslator` | `dict[str, Any]` | `zspec[elasticsearch]` |
+| `RediSearchTranslator` | `str` | `zspec[redis]` |
+
+### Pydantic integration
+
+```python
+from zspec.contrib.pydantic import validate
+
+class Product(BaseModel):
+    price: int
+    _check_price = field_validator("price")(
+        validate(MinPrice(100), message="Price is too low"),
+    )
+```
 
 ## Anti-patterns
 
@@ -135,5 +149,8 @@ src/zspec/
     sqlalchemy.py    # SqlAlchemyTranslator
     polars.py        # PolarsTranslator
     pandas.py        # PandasTranslator
+    elasticsearch.py # ElasticsearchTranslator
     logging.py       # LoggingTranslator — log each translation step
+    redis.py         # RediSearchTranslator
+    pydantic.py      # validate() — use specs as Pydantic validators
 ```
