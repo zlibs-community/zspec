@@ -81,6 +81,16 @@ json.dump(to_dict(spec), f)
 spec = from_dict(json.load(f))           # auto-discovers via __init_subclass__
 ```
 
+YAML and TOML work identically — load to dict, pass to `from_dict`:
+
+```python
+import tomllib                           # stdlib since 3.11
+spec = from_dict(tomllib.load(open("spec.toml")))
+
+import yaml                              # pip install pyyaml
+spec = from_dict(yaml.safe_load(open("spec.yaml")))
+```
+
 ### Translators
 
 Subclass and override `_translate`. Each translator has `_and`, `_or`, `_not`, `_xor`:
