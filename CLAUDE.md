@@ -141,6 +141,7 @@ src/zspec/
   explain.py         # explain(), to_ascii(), ExplainNode
   serialize.py       # to_dict(), from_dict()
   cache.py           # CachingSpecification — TTL memoization
+  log.py             # LoggingTranslator — log each translation step
   translator.py      # abstract Translator base
   translators.py     # SqlTranslator, MongoTranslator
   utils.py           # slots_of()
@@ -150,7 +151,6 @@ src/zspec/
     polars.py        # PolarsTranslator
     pandas.py        # PandasTranslator
     elasticsearch.py # ElasticsearchTranslator
-    logging.py       # LoggingTranslator — log each translation step
     redis.py         # RediSearchTranslator
     pydantic.py      # validate() — use specs as Pydantic validators
 ```

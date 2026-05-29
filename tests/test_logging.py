@@ -6,7 +6,7 @@ from typing import Any, override
 import pytest
 
 from zspec import Specification
-from zspec.contrib.logging import LoggingTranslator, logger
+from zspec.log import LoggingTranslator, logger
 from zspec.translator import Translator
 
 
@@ -58,7 +58,7 @@ class TestLoggingTranslator:
         inner = StringTranslator()
         wrapped = LoggingTranslator(inner)
         spec = Always() & ~Never()
-        with caplog.at_level(logging.DEBUG, logger="zspec.contrib.logging"):
+        with caplog.at_level(logging.DEBUG, logger="zspec.log"):
             wrapped.translate(spec)
         messages = [r.message for r in caplog.records]
         assert len(messages) >= 2
@@ -67,7 +67,7 @@ class TestLoggingTranslator:
     def test_logs_to_debug(self, caplog: pytest.LogCaptureFixture) -> None:
         inner = StringTranslator()
         wrapped = LoggingTranslator(inner)
-        with caplog.at_level(logging.DEBUG, logger="zspec.contrib.logging"):
+        with caplog.at_level(logging.DEBUG, logger="zspec.log"):
             wrapped.translate(Always())
         assert len(caplog.records) == 2
         assert all(r.levelno == logging.DEBUG for r in caplog.records)
@@ -75,7 +75,7 @@ class TestLoggingTranslator:
     def test_logs_recursive_structure(self, caplog: pytest.LogCaptureFixture) -> None:
         inner = StringTranslator()
         wrapped = LoggingTranslator(inner)
-        with caplog.at_level(logging.DEBUG, logger="zspec.contrib.logging"):
+        with caplog.at_level(logging.DEBUG, logger="zspec.log"):
             wrapped.translate(Always() & Never())
         messages = [r.message for r in caplog.records]
         assert any("  ->" in m for m in messages)
@@ -83,7 +83,7 @@ class TestLoggingTranslator:
     def test_no_logging_when_disabled(self, caplog: pytest.LogCaptureFixture) -> None:
         inner = StringTranslator()
         wrapped = LoggingTranslator(inner)
-        caplog.set_level(logging.DEBUG, logger="zspec.contrib.logging")
+        caplog.set_level(logging.DEBUG, logger="zspec.log")
         logger.setLevel(logging.WARNING)
         try:
             wrapped.translate(Always())

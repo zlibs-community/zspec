@@ -12,6 +12,9 @@ from zspec.explain import (
 from zspec.explain import (
     to_ascii as to_ascii,
 )
+from zspec.log import (
+    LoggingTranslator as LoggingTranslator,
+)
 from zspec.serialize import (
     from_dict as from_dict,
 )

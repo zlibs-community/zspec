@@ -15,7 +15,7 @@ class LoggingTranslator[T]:
     Usage::
 
         import logging
-        logging.getLogger("zspec.contrib.logging").setLevel(logging.DEBUG)
+        logging.getLogger("zspec.log").setLevel(logging.DEBUG)
 
         translator = LoggingTranslator(MySqlTranslator())
         result = translator.translate(InStock() & MinPrice(100))

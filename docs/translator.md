@@ -373,18 +373,18 @@ Wrap any translator to log each translation step:
 
 ```python
 import logging
-from zspec.contrib.logging import LoggingTranslator
+from zspec.log import LoggingTranslator
 
-logging.getLogger("zspec.contrib.logging").setLevel(logging.DEBUG)
+logging.getLogger("zspec.log").setLevel(logging.DEBUG)
 
 translator = LoggingTranslator(MySql())
 result = translator.translate(InStock() & MinPrice(100))
-# DEBUG:zspec.contrib.logging: (InStock AND >= 100)
-# DEBUG:zspec.contrib.logging:   InStock
-# DEBUG:zspec.contrib.logging:     -> in_stock = %s
-# DEBUG:zspec.contrib.logging:   >= 100
-# DEBUG:zspec.contrib.logging:     -> price >= %s
-# DEBUG:zspec.contrib.logging:   -> (in_stock = %s AND price >= %s)
+# DEBUG:zspec.log: (InStock AND >= 100)
+# DEBUG:zspec.log:   InStock
+# DEBUG:zspec.log:     -> in_stock = %s
+# DEBUG:zspec.log:   >= 100
+# DEBUG:zspec.log:     -> price >= %s
+# DEBUG:zspec.log:   -> (in_stock = %s AND price >= %s)
 ```
 
 ## Using translators with real queries

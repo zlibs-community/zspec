@@ -105,7 +105,7 @@ _check_price = field_validator("price")(
 )
 
 # Log translation steps
-from zspec.contrib.logging import LoggingTranslator
+from zspec.log import LoggingTranslator
 translator = LoggingTranslator(MySql())
 ```
 
