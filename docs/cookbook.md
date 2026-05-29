@@ -39,6 +39,46 @@ spec = from_dict(data)
 results = list(spec.filter(products))
 ```
 
+Rules in JSON aren't the only format — YAML and TOML work too:
+
+```python
+import tomllib                           # stdlib since 3.11
+
+spec = from_dict(tomllib.load(open("rules.toml")))
+```
+
+## Cache expensive checks
+
+Avoid recomputing heavy ``is_satisfied_by`` calls with TTL-based caching:
+
+```python
+from zspec import CachingSpecification
+
+spec = CachingSpecification.wrap(HeavySpec(), ttl=60.0, maxsize=256)
+
+# First call computes, subsequent calls use cache for 60 seconds
+result = spec(product)
+result = spec(product)  # cached
+
+spec.clear()  # invalidate
+```
+
+## Validate with Pydantic
+
+Use specifications as drop-in Pydantic field validators:
+
+```python
+from pydantic import BaseModel, field_validator
+from zspec.contrib.pydantic import validate
+
+class Product(BaseModel):
+    price: int
+
+    _check_price = field_validator("price")(
+        validate(MinPrice(100), message="Price too low"),
+    )
+```
+
 ## Conditional composition
 
 Build a spec dynamically based on user input:

@@ -267,6 +267,23 @@ available = Specification[Product].excluding(
 
 Empty ``excluding()`` returns ``true()`` (nothing excluded = accept everything).
 
+## Caching
+
+Wrap any specification with `CachingSpecification` to memoize results with a TTL:
+
+```python
+from zspec import CachingSpecification
+
+spec = CachingSpecification.wrap(HeavySpec(), ttl=30.0, maxsize=1024)
+spec(product)   # computes on first call
+spec(product)   # returns cached result for 30 seconds
+spec.clear()    # invalidate all cached entries
+spec.size       # number of cached entries
+```
+
+Cached specs compose with `&`, `|`, `~`, `^` and work with `filter`, `partition`,
+`count`. Thread-safe — safe to share across worker threads.
+
 ## Serialization: `to_dict` / `from_dict`
 
 Convert specification trees to plain dictionaries and back:
@@ -305,6 +322,24 @@ spec = from_dict({"type": "MinPrice", "threshold": 100})
 
 Pass a ``registry`` dict only when the class name in JSON
 differs from the Python class name.
+
+### YAML and TOML
+
+JSON is not the only format. Load from YAML or TOML by reading to a dict
+first, then passing to `from_dict`:
+
+```python
+import tomllib                           # stdlib since 3.11
+
+with open("rules.toml", "rb") as f:
+    spec = from_dict(tomllib.load(f))
+
+# YAML — pip install pyyaml
+import yaml
+
+with open("rules.yaml") as f:
+    spec = from_dict(yaml.safe_load(f))
+```
 
 ### Use case: rules stored as data
 

@@ -274,6 +274,119 @@ df = pd.DataFrame({"price": [50, 200], "in_stock": [True, True]})
 result = df.query(translator.translate(InStock() & MinPrice(100)))
 ```
 
+### ElasticsearchTranslator
+
+Generate Elasticsearch query DSL — no extra dependencies:
+
+```python
+from zspec import Specification
+from zspec.contrib.elasticsearch import ElasticsearchTranslator
+
+
+class InStock(Specification[Product]):
+    def is_satisfied_by(self, candidate: Product) -> bool:
+        return candidate.in_stock
+
+
+class MinPrice(Specification[Product]):
+    def __init__(self, min_price: int) -> None:
+        self.min_price = min_price
+
+    def is_satisfied_by(self, candidate: Product) -> bool:
+        return candidate.price >= self.min_price
+
+
+class MyTranslator(ElasticsearchTranslator):
+    def _translate(self, spec: Specification[Product]) -> dict[str, Any]:
+        match spec:
+            case InStock():
+                return {"term": {"in_stock": True}}
+            case MinPrice(min_price=price):
+                return {"range": {"price": {"gte": price}}}
+            case _:
+                return super()._translate(spec)
+
+translator = MyTranslator()
+# results = es.search(
+#     index="products",
+#     query=translator.translate(InStock() & MinPrice(100)),
+# )
+```
+
+### RediSearchTranslator
+
+Generate RediSearch ``FT.SEARCH`` queries — no extra dependencies:
+
+```python
+from zspec import Specification
+from zspec.contrib.redis import RediSearchTranslator
+
+
+class InStock(Specification[Product]):
+    def is_satisfied_by(self, candidate: Product) -> bool:
+        return candidate.in_stock
+
+
+class MinPrice(Specification[Product]):
+    def __init__(self, min_price: int) -> None:
+        self.min_price = min_price
+
+    def is_satisfied_by(self, candidate: Product) -> bool:
+        return candidate.price >= self.min_price
+
+
+class MyTranslator(RediSearchTranslator):
+    def _translate(self, spec: Specification[Product]) -> str:
+        match spec:
+            case InStock():
+                return "@in_stock:{true}"
+            case MinPrice(min_price=price):
+                return f"@price:[{price} +inf]"
+            case _:
+                return super()._translate(spec)
+
+translator = MyTranslator()
+q = translator.translate(InStock() & MinPrice(100))
+# results = redis.ft("idx:products").search(q)
+```
+
+### Pydantic integration
+
+Use specifications as Pydantic field validators:
+
+```python
+from pydantic import BaseModel, field_validator
+from zspec.contrib.pydantic import validate
+
+
+class Product(BaseModel):
+    price: int
+
+    _check_price = field_validator("price")(
+        validate(MinPrice(100), message="Price is too low"),
+    )
+```
+
+### LoggingTranslator
+
+Wrap any translator to log each translation step:
+
+```python
+import logging
+from zspec.contrib.logging import LoggingTranslator
+
+logging.getLogger("zspec.contrib.logging").setLevel(logging.DEBUG)
+
+translator = LoggingTranslator(MySql())
+result = translator.translate(InStock() & MinPrice(100))
+# DEBUG:zspec.contrib.logging: (InStock AND >= 100)
+# DEBUG:zspec.contrib.logging:   InStock
+# DEBUG:zspec.contrib.logging:     -> in_stock = %s
+# DEBUG:zspec.contrib.logging:   >= 100
+# DEBUG:zspec.contrib.logging:     -> price >= %s
+# DEBUG:zspec.contrib.logging:   -> (in_stock = %s AND price >= %s)
+```
+
 ## Using translators with real queries
 
 Translators produce **filter fragments** — not full queries. Joins, projections,
@@ -344,6 +457,22 @@ expr = MyPolars().translate(InStock() & Category("Books"))
 
 df = products_df.join(categories_df, on="category_id")
 result = df.filter(expr)
+```
+
+### Elasticsearch with index
+
+```python
+query = MyES().translate(InStock() & MinPrice(100))
+
+es.search(index="products", query=query)
+```
+
+### RediSearch with index
+
+```python
+q = MyRedis().translate(InStock() & MinPrice(100))
+
+redis.ft("idx:products").search(q)
 ```
 
 ## Writing a custom translator

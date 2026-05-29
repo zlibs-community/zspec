@@ -64,3 +64,15 @@
 ::: zspec.from_dict
     options:
         members: true
+
+::: zspec.CachingSpecification
+    options:
+        members: true
+
+::: zspec.ExplainNode
+    options:
+        members: true
+
+::: zspec.to_ascii
+    options:
+        members: true
