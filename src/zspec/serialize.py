@@ -72,9 +72,10 @@ def _to_dict_leaf(spec: Specification[Any]) -> dict[str, object]:
         hash(spec)
     except TypeError:
         msg = (
-            f"Cannot serialize {name}: specification is not hashable. "
-            f"Use __slots__ for all fields."
-        )
+              f"Cannot serialize {name}: specification is not hashable because "
+              f"a field holds an unhashable value (e.g. a list or dict). "
+              f"Use hashable values like tuple or frozenset."
+          )
         raise TypeError(msg) from None
     data: dict[str, object] = {"type": name}
     for s in slots_of(spec):
