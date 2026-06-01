@@ -1,6 +1,6 @@
 # zspec — AI-friendly specification library
 
-Composable specification pattern for Python 3.14+. Turn business rules into
+Composable specification pattern for Python 3.12+. Turn business rules into
 objects, combine them with boolean operators, translate to database queries.
 
 ## Core API

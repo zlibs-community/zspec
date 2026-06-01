@@ -1,5 +1,5 @@
 site_name: zspec
-site_description: Composable specification pattern for Python 3.14+
+site_description: Composable specification pattern for Python 3.12+
 repo_url: https://github.com/oek1ng/zspec
 repo_name: oek1ng/zspec
 
