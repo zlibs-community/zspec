@@ -3,6 +3,8 @@
 from collections.abc import Mapping
 from typing import Any, ClassVar, override
 
+import pytest
+
 from zspec import (
     Specification,
     from_dict,
@@ -184,6 +186,60 @@ class _Tagged(Specification[object]):
     @override
     def is_satisfied_by(self, candidate: object) -> bool:
         return True
+
+
+class _Unhashable(Specification[object]):
+    __slots__ = ("items",)
+
+    def __init__(self, items: list[int]) -> None:
+        self.items = items
+
+    @override
+    def is_satisfied_by(self, candidate: object) -> bool:
+        return True
+
+
+class TestToDictErrors:
+    def test_unhashable_leaf_raises(self) -> None:
+        spec = _Unhashable([1, 2, 3])
+        with pytest.raises(TypeError, match="specification is not hashable"):
+            to_dict(spec)
+
+
+class TestFromDictErrors:
+    def test_non_string_type_raises(self) -> None:
+        with pytest.raises(TypeError, match="'type' must be a string"):
+            from_dict({"type": 123})
+
+    def test_unknown_type_raises(self) -> None:
+        with pytest.raises(TypeError, match="Unknown specification type"):
+            from_dict({"type": "Nonexistent"})
+
+    def test_not_spec_inner_not_dict_raises(self) -> None:
+        with pytest.raises(TypeError, match="Invalid NotSpecification data"):
+            from_dict({"type": "NotSpecification", "spec": "not-a-dict"})
+
+    def test_and_left_not_dict_raises(self) -> None:
+        data: dict[str, object] = {
+            "type": "AndSpecification",
+            "left": "not-a-dict",
+            "right": {"type": "TRUE"},
+        }
+        with pytest.raises(TypeError, match="Invalid AndSpecification data"):
+            from_dict(data)
+
+    def test_or_right_not_dict_raises(self) -> None:
+        data: dict[str, object] = {
+            "type": "OrSpecification",
+            "left": {"type": "TRUE"},
+            "right": "not-a-dict",
+        }
+        with pytest.raises(TypeError, match="Invalid OrSpecification data"):
+            from_dict(data)
+
+    def test_xor_missing_operand_raises(self) -> None:
+        with pytest.raises(TypeError, match="Invalid XorSpecification data"):
+            from_dict({"type": "XorSpecification", "left": {"type": "TRUE"}})
 
 
 class TestAutoDiscovery:
