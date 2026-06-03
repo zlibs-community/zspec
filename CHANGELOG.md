@@ -2,6 +2,27 @@
 
 <!-- version list -->
 
+## v1.8.1 (2026-06-03)
+
+### Bug Fixes
+
+- Correct misleading unhashable-spec error message
+  ([`ba35aa8`](https://github.com/zlibs-community/zspec/commit/ba35aa89f0a57482b0c759a0aadf03723bb24ea3))
+
+### Chores
+
+- Bump version to 1.8.1
+  ([`960e899`](https://github.com/zlibs-community/zspec/commit/960e899ffa54d262db22b5ddbda197af0d3d2035))
+
+- Bump version to 1.8.2
+  ([`372984b`](https://github.com/zlibs-community/zspec/commit/372984b764e423b984213fddafe917e523b064bf))
+
+### Refactoring
+
+- Move LoggingTranslator from contrib to zspec.log
+  ([`42fe72c`](https://github.com/zlibs-community/zspec/commit/42fe72c5b32c3f7888dc41cd0bd636643774766e))
+
+
 ## v1.8.0 (2026-05-29)
 
 ### Chores
